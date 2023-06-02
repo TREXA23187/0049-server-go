@@ -1,0 +1,27 @@
+mysql:
+  host: 127.0.0.1
+  port: 3306
+  config: "charset=utf8mb4&parseTime=True&loc=Local"
+  db: 49_project
+  user: root
+  password: 1234
+  log_level: dev
+logger:
+  level: info
+  prefix: '[49_project]'
+  director: log
+  show-line: true
+  log-in-console: true
+system:
+  host: "0.0.0.0"
+  port: 8080
+  env: release
+jwt:
+  secret: 0049
+  expires: 1   # Token expiration time /hour
+  issuer: "1234"
+redis:
+  ip: "127.0.0.1"
+  port: 6379
+  password: 1234
+  pool_size: 100
