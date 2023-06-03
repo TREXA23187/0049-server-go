@@ -3,8 +3,28 @@ package user_service
 import (
 	"0049-server-go/global"
 	"0049-server-go/models"
+	"0049-server-go/models/ctype"
+	"errors"
 	"strconv"
 )
+
+func CreateRole(role ctype.Role, description string) error {
+	roleModel := models.RoleModel{
+		RoleType:    role,
+		Description: description,
+	}
+	err := global.DB.Take(&roleModel, "role_type = ?", roleModel.RoleType).Error
+	if err == nil {
+		return errors.New("role already exists")
+	}
+	err = global.DB.Create(&roleModel).Error
+	if err != nil {
+		global.Log.Error(err)
+		return err
+	}
+
+	return nil
+}
 
 func GetRoleByUserId(userId string) (*models.RoleModel, error) {
 	var userRoleModel models.UserRoleModel
