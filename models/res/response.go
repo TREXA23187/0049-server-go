@@ -1,7 +1,7 @@
 package res
 
 import (
-	"gin-chat/utils"
+	"0049-server-go/utils"
 	"github.com/gin-gonic/gin"
 	"net/http"
 )

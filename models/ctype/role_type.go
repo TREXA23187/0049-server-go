@@ -5,10 +5,11 @@ import "encoding/json"
 type Role int
 
 const (
-	PermissionAdmin       Role = 1
-	PermissionUser        Role = 2
-	PermissionVisitor     Role = 3
-	PermissionDisableUser Role = 4
+	RoleSuperAdmin Role = 1
+	RoleAdmin      Role = 2
+	RoleResearcher Role = 3
+	RoleUser       Role = 4
+	RoleDisabled   Role = 5
 )
 
 func (s Role) MarshalJSON() ([]byte, error) {
@@ -18,14 +19,16 @@ func (s Role) MarshalJSON() ([]byte, error) {
 func (s Role) String() string {
 	var str string
 	switch s {
-	case PermissionAdmin:
+	case RoleSuperAdmin:
+		str = "super_admin"
+	case RoleAdmin:
 		str = "admin"
-	case PermissionUser:
+	case RoleResearcher:
+		str = "researcher"
+	case RoleUser:
 		str = "user"
-	case PermissionVisitor:
-		str = "visitor"
-	case PermissionDisableUser:
-		str = "disabled_user"
+	case RoleDisabled:
+		str = "disabled"
 	default:
 		str = "other"
 	}

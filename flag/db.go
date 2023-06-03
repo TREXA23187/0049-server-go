@@ -8,10 +8,16 @@ import (
 func MakeMigrations() {
 	var err error
 	//global.DB.SetupJoinTable(&models.UserModel{}, "CollectsModels", &models.UserCollectModel{})
+	global.DB.SetupJoinTable(&models.UserModel{}, "Role", &models.UserRoleModel{})
+	global.DB.SetupJoinTable(&models.RoleModel{}, "Permission", &models.RolePermissionModel{})
 
 	err = global.DB.Set("gorm:table_options", "ENGINE=InnoDB").
 		AutoMigrate(
 			&models.UserModel{},
+			&models.RoleModel{},
+			&models.PermissionModel{},
+			&models.UserRoleModel{},
+			&models.RolePermissionModel{},
 			//&log_stash.LogStashModel{},
 		)
 	if err != nil {
