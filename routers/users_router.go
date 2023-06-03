@@ -8,4 +8,5 @@ func (router RouterGroup) UsersRouter() {
 	router.POST("user", userApi.UserCreateView)
 	router.GET("users", userApi.UserListView)
 	router.POST("role", userApi.RoleCreateView)
+	router.POST("perm", userApi.PermissionCreateView)
 }

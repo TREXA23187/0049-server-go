@@ -34,3 +34,20 @@ func (p PermissionMethod) String() string {
 	}
 	return str
 }
+
+func StringToPermissionMethod(str string) PermissionMethod {
+	var method PermissionMethod
+	switch str {
+	case "ALL":
+		method = ALL
+	case "GET":
+		method = ALL
+	case "POST":
+		method = POST
+	case "PUT":
+		method = PUT
+	case "DELETE":
+		method = DELETE
+	}
+	return method
+}

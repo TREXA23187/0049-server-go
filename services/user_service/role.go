@@ -13,7 +13,7 @@ func CreateRole(role ctype.Role, description string) error {
 		RoleType:    role,
 		Description: description,
 	}
-	err := global.DB.Take(&roleModel, "role_type = ?", roleModel.RoleType).Error
+	err := global.DB.Take(&roleModel, "role_type = ?", role).Error
 	if err == nil {
 		return errors.New("role already exists")
 	}
