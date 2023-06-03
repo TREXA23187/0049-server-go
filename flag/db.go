@@ -9,7 +9,7 @@ func MakeMigrations() {
 	var err error
 	//global.DB.SetupJoinTable(&models.UserModel{}, "CollectsModels", &models.UserCollectModel{})
 	global.DB.SetupJoinTable(&models.UserModel{}, "Role", &models.UserRoleModel{})
-	global.DB.SetupJoinTable(&models.RoleModel{}, "Permission", &models.RolePermissionModel{})
+	global.DB.SetupJoinTable(&models.RoleModel{}, "Permissions", &models.RolePermissionModel{})
 
 	err = global.DB.Set("gorm:table_options", "ENGINE=InnoDB").
 		AutoMigrate(

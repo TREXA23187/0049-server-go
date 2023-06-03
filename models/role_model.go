@@ -1,8 +1,10 @@
 package models
 
+import "0049-server-go/models/ctype"
+
 type RoleModel struct {
 	MODEL
-	RoleName    string          `gorm:"size:36" json:"role_name"`
-	Description string          `gorm:"size:36" json:"description"`
-	Permission  PermissionModel `gorm:"many2many:role_permission_models;joinForeignKey:RoleID;JoinReferences:PermissionID" json:"permission"`
+	RoleType    ctype.Role        `gorm:"size:36" json:"role_type"`
+	Description string            `gorm:"size:36" json:"description"`
+	Permissions []PermissionModel `gorm:"many2many:role_permission_models;joinForeignKey:RoleID;JoinReferences:PermissionID" json:"permission"`
 }

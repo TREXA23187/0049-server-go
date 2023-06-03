@@ -6,17 +6,20 @@ import (
 )
 
 type Option struct {
-	DB bool
+	DB   bool
+	User bool
 }
 
 // Parse Parsing Command Parameters
 func Parse() Option {
 	db := sys_flag.Bool("db", false, "Initialize Database")
+	user := sys_flag.Bool("user", false, "Init Admin")
 
 	// Parse command line parameters and write them into the registered flag
 	sys_flag.Parse()
 	return Option{
-		DB: *db,
+		DB:   *db,
+		User: *user,
 	}
 }
 
@@ -43,6 +46,11 @@ func IsWebStop(option Option) (res bool) {
 func SwitchOption(option Option) {
 	if option.DB {
 		MakeMigrations()
+		return
+	}
+
+	if option.User {
+		CreateUser()
 		return
 	}
 
