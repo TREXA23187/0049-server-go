@@ -6,10 +6,10 @@ import (
 
 func (router RouterGroup) UsersRouter() {
 	userApi := api.ApiGroupApp.UserApi
-	router.POST("login", userApi.UserLoginView)
-	router.POST("user", userApi.UserCreateView)
-	router.GET("users", userApi.UserListView)
-	router.POST("role", userApi.RoleCreateView)
-	router.POST("perm", userApi.PermissionCreateView)
-	router.POST("role_perm", userApi.RolePermissionCreateView)
+	router.POST("/users/login", userApi.UserLoginView)
+	router.POST("/users/user", userApi.UserCreateView)
+	router.GET("/users/list", userApi.UserListView)
+	router.POST("/users/role", userApi.RoleCreateView)
+	router.POST("/users/perm", userApi.PermissionCreateView)
+	router.POST("/users/role_perm", userApi.RolePermissionCreateView)
 }

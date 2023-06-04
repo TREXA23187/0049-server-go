@@ -11,7 +11,7 @@ type ErrorCode int
 const (
 	SettingsError   ErrorCode = 1001
 	ArgumentError   ErrorCode = 1002
-	PermissionError ErrorCode = 1009
+	PermissionError ErrorCode = 10001
 )
 
 var ErrorMap = map[ErrorCode]string{}

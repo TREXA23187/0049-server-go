@@ -13,7 +13,7 @@ import (
 )
 
 var authWhiteList = []string{
-	"/api/v1/login-POST",
+	"/api/v1/users/login-POST",
 }
 
 func JwtAuth() gin.HandlerFunc {
@@ -28,7 +28,8 @@ func JwtAuth() gin.HandlerFunc {
 
 		token := ctx.Request.Header.Get("token")
 		if token == "" {
-			res.FailWithMessage("No token carried", ctx)
+			global.Log.Error("No token carried")
+			res.FailWithCode(res.PermissionError, ctx)
 			ctx.Abort()
 			return
 		}
@@ -36,7 +37,8 @@ func JwtAuth() gin.HandlerFunc {
 		claims, err := jwts.ParseToken(token)
 
 		if err != nil {
-			res.FailWithMessage("Token error", ctx)
+			global.Log.Error("Token error")
+			res.FailWithCode(res.PermissionError, ctx)
 			ctx.Abort()
 			return
 		}
@@ -57,7 +59,8 @@ func JwtAuth() gin.HandlerFunc {
 
 		rolePermissionModels, err := user_service.GetPermissionByRole(ctype.Role(claims.Role))
 		if err != nil {
-			res.FailWithMessage(err.Error(), ctx)
+			global.Log.Error(err.Error())
+			res.FailWithCode(res.PermissionError, ctx)
 			ctx.Abort()
 			return
 		}
