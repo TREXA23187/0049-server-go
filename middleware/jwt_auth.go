@@ -35,7 +35,6 @@ func JwtAuth() gin.HandlerFunc {
 		}
 
 		claims, err := jwts.ParseToken(token)
-
 		if err != nil {
 			global.Log.Error("Token error")
 			res.FailWithCode(res.PermissionError, ctx)
