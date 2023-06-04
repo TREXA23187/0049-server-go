@@ -20,5 +20,5 @@ func ParseToken(tokenStr string) (*CustomClaims, error) {
 		return claims, nil
 	}
 
-	return nil, errors.New("Invalid token")
+	return nil, errors.New("invalid token")
 }

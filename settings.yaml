@@ -17,9 +17,9 @@ system:
   port: 8080
   env: release
 jwt:
-  secret: 0049
+  secret: xxxxx
   expires: 1   # Token expiration time /hour
-  issuer: "1234"
+  issuer: "49_project"
 redis:
   ip: "127.0.0.1"
   port: 6379

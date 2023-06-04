@@ -52,12 +52,10 @@ func (UserApi) UserLoginView(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println(roleModel)
-
 	// Successfully logged in and generate token
 	token, err := jwts.GenerateToken(jwts.JwtPayLoad{
 		NickName: userModel.NickName,
-		Role:     roleModel.RoleType,
+		Role:     int(roleModel.RoleType),
 		UserID:   userModel.ID,
 	})
 

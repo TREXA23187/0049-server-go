@@ -19,5 +19,6 @@ func GenerateToken(user JwtPayLoad) (string, error) {
 	}
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
+
 	return token.SignedString(MySecret)
 }
