@@ -34,3 +34,20 @@ func (s Role) String() string {
 	}
 	return str
 }
+
+func StringToRoleType(str string) Role {
+	var role Role
+	switch str {
+	case "super admin":
+		role = RoleSuperAdmin
+	case "admin":
+		role = RoleAdmin
+	case "researcher":
+		role = RoleResearcher
+	case "user":
+		role = RoleUser
+	case "disabled":
+		role = RoleDisabled
+	}
+	return role
+}

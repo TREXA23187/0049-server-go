@@ -41,7 +41,7 @@ func StringToPermissionMethod(str string) PermissionMethod {
 	case "ALL":
 		method = ALL
 	case "GET":
-		method = ALL
+		method = GET
 	case "POST":
 		method = POST
 	case "PUT":

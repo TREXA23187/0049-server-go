@@ -9,8 +9,9 @@ import (
 type ErrorCode int
 
 const (
-	SettingsError ErrorCode = 1001
-	ArgumentError ErrorCode = 1002
+	SettingsError   ErrorCode = 1001
+	ArgumentError   ErrorCode = 1002
+	PermissionError ErrorCode = 1009
 )
 
 var ErrorMap = map[ErrorCode]string{}

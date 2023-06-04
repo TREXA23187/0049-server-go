@@ -2,6 +2,7 @@ package routers
 
 import (
 	"0049-server-go/global"
+	"0049-server-go/middleware"
 	"0049-server-go/models/res"
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"
@@ -15,12 +16,15 @@ type RouterGroup struct {
 func InitRouter() *gin.Engine {
 	gin.SetMode(global.Config.System.Env)
 	router := gin.Default()
+	//Global authentication middleware
+	router.Use(middleware.JwtAuth())
 
 	router.GET("/swagger/*any", gs.WrapHandler(swaggerFiles.Handler))
 
 	res.InitErrorCode()
 
 	apiRouterGroup := router.Group("/api/v1")
+
 	routerGroupApp := RouterGroup{
 		apiRouterGroup,
 	}
