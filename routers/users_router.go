@@ -12,4 +12,5 @@ func (router RouterGroup) UsersRouter() {
 	router.POST("/users/role", userApi.RoleCreateView)
 	router.POST("/users/perm", userApi.PermissionCreateView)
 	router.POST("/users/role_perm", userApi.RolePermissionCreateView)
+	router.POST("/users/logout", userApi.UserLogoutView)
 }

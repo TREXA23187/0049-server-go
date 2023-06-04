@@ -67,7 +67,7 @@ func (UserApi) UserLoginView(ctx *gin.Context) {
 
 	res.OkWithData(gin.H{
 		"nick_name": userModel.NickName,
-		"role":      roleModel.RoleType,
+		"role":      int(roleModel.RoleType),
 		"token":     token,
 	}, ctx)
 }

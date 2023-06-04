@@ -1,8 +1,9 @@
 package services
 
-//
-//type ServiceGroup struct {
-//	UserService user_service.UserService
-//}
-//
-//var ServiceApp = new(ServiceGroup)
+import "0049-server-go/services/user_service"
+
+type ServiceGroup struct {
+	UserService user_service.UserService
+}
+
+var ServiceApp = new(ServiceGroup)

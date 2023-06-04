@@ -15,7 +15,7 @@ func main() {
 	// Connect to database
 	global.DB = core.InitGorm()
 	// Connect Redis
-	//global.Redis = core.ConnectRedis()
+	global.Redis = core.ConnectRedis()
 
 	// Command parameter binding
 	option := flag.Parse()

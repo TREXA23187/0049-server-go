@@ -5,6 +5,7 @@ import (
 	"0049-server-go/models"
 	"0049-server-go/models/ctype"
 	"0049-server-go/models/res"
+	"0049-server-go/services/redis_service"
 	"0049-server-go/services/user_service"
 	"0049-server-go/utils"
 	"0049-server-go/utils/jwts"
@@ -36,18 +37,19 @@ func JwtAuth() gin.HandlerFunc {
 
 		claims, err := jwts.ParseToken(token)
 		if err != nil {
-			global.Log.Error("Token error")
+			global.Log.Error("Token error: ", err)
 			res.FailWithCode(res.PermissionError, ctx)
 			ctx.Abort()
 			return
 		}
 
 		// whether in redis
-		//if redis_service.CheckLogout(token) {
-		//	res.FailWithMessage("Token has expired", ctx)
-		//	ctx.Abort()
-		//	return
-		//}
+		if redis_service.CheckLogout(token) {
+			global.Log.Error("Token has expired:  ", err)
+			res.FailWithCode(res.PermissionError, ctx)
+			ctx.Abort()
+			return
+		}
 
 		// super admin
 		if ctype.Role(claims.Role) == ctype.RoleSuperAdmin {
