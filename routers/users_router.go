@@ -12,4 +12,5 @@ func (router RouterGroup) UsersRouter() {
 	router.GET("users", middleware.JwtAuth(), userApi.UserListView)
 	router.POST("role", userApi.RoleCreateView)
 	router.POST("perm", userApi.PermissionCreateView)
+	router.POST("role_perm", userApi.RolePermissionCreateView)
 }

@@ -25,3 +25,14 @@ func CreatePermission(url string, method ctype.PermissionMethod, description str
 
 	return nil
 }
+
+func GetPermissionByURLAndMethod(url string, method ctype.PermissionMethod) (*models.PermissionModel, error) {
+	var permissionModel models.PermissionModel
+	err := global.DB.Take(&permissionModel, "url = ? and method = ?", url, method).Error
+	if err != nil {
+		global.Log.Error(err)
+		return nil, err
+	}
+
+	return &permissionModel, nil
+}

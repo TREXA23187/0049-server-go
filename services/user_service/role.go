@@ -47,3 +47,47 @@ func GetRoleById(roleId string) (*models.RoleModel, error) {
 
 	return &roleModel, nil
 }
+
+func GetRoleByRoleType(role ctype.Role) (*models.RoleModel, error) {
+	var roleModel models.RoleModel
+	err := global.DB.Take(&roleModel, "role_type = ?", role).Error
+	if err != nil {
+		global.Log.Error(err)
+		return nil, err
+	}
+
+	return &roleModel, nil
+}
+
+func GrantPermissionToRole(role ctype.Role, url string, method ctype.PermissionMethod) error {
+	roleModel, err := GetRoleByRoleType(role)
+	if err != nil {
+		global.Log.Error(err)
+		return err
+	}
+
+	permissionModel, err := GetPermissionByURLAndMethod(url, method)
+	if err != nil {
+		global.Log.Error(err)
+		return err
+	}
+
+	rolePermissionModel := models.RolePermissionModel{
+		RoleID:       roleModel.ID,
+		PermissionID: permissionModel.ID,
+	}
+
+	err = global.DB.Take(&rolePermissionModel, "role_id = ? and permission_id = ?", roleModel.ID, permissionModel.ID).Error
+	if err == nil {
+		global.Log.Error("the role already has the permission")
+		return errors.New("the role already has the permission")
+	}
+
+	err = global.DB.Create(&rolePermissionModel).Error
+	if err != nil {
+		global.Log.Error(err)
+		return err
+	}
+
+	return nil
+}
