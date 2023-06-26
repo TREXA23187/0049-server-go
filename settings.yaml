@@ -18,7 +18,7 @@ system:
   env: release
 jwt:
   secret: xxxxx
-  expires: 1   # Token expiration time /hour
+  expires: 12   # Token expiration time /hour
   issuer: "49_project"
 redis:
   ip: "127.0.0.1"

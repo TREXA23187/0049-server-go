@@ -20,7 +20,7 @@ func (p PermissionMethod) String() string {
 	var str string
 	switch p {
 	case ALL:
-		str = "ALL"
+		str = "*"
 	case GET:
 		str = "GET"
 	case POST:
@@ -38,7 +38,7 @@ func (p PermissionMethod) String() string {
 func StringToPermissionMethod(str string) PermissionMethod {
 	var method PermissionMethod
 	switch str {
-	case "ALL":
+	case "*":
 		method = ALL
 	case "GET":
 		method = GET

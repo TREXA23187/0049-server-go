@@ -15,6 +15,7 @@ import (
 
 var authWhiteList = []string{
 	"/api/v1/users/login-POST",
+	"/api/v1/users/pb-GET",
 }
 
 func JwtAuth() gin.HandlerFunc {
