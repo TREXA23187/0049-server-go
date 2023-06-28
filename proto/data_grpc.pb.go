@@ -19,7 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	FormatData_DoFormat_FullMethodName = "/example.FormatData/DoFormat"
+	FormatData_DoFormat_FullMethodName = "/proto.FormatData/DoFormat"
 )
 
 // FormatDataClient is the client API for FormatData service.
@@ -96,7 +96,7 @@ func _FormatData_DoFormat_Handler(srv interface{}, ctx context.Context, dec func
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var FormatData_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "example.FormatData",
+	ServiceName: "proto.FormatData",
 	HandlerType: (*FormatDataServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
