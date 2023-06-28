@@ -16,4 +16,5 @@ func (router RouterGroup) UsersRouter() {
 	router.POST("/users/logout", userApi.UserLogoutView)
 
 	router.GET("/users/pb", userApi.PbListView)
+	router.POST("/users/iris", userApi.IrisPredictView)
 }
