@@ -3,7 +3,7 @@ package users_api
 import (
 	"0049-server-go/global"
 	"0049-server-go/models/res"
-	pd "0049-server-go/proto"
+	pb "0049-server-go/proto"
 	"context"
 	"github.com/gin-gonic/gin"
 	"google.golang.org/grpc"
@@ -30,9 +30,9 @@ func (UserApi) IrisPredictView(ctx *gin.Context) {
 		res.FailWithMessage("did not connect: %v", ctx)
 	}
 	defer conn.Close()
-	c := pd.NewPredictionTaskClient(conn)
+	c := pb.NewPredictionTaskClient(conn)
 
-	r, err := c.LaunchTask(context.Background(), &pd.TaskRequest{SepalLength: cr.SepalLength, SepalWidth: cr.SepalWidth, PetalLength: cr.PetalLength, PetalWidth: cr.PetalWidth})
+	r, err := c.LaunchTask(context.Background(), &pb.TaskRequest{SepalLength: cr.SepalLength, SepalWidth: cr.SepalWidth, PetalLength: cr.PetalLength, PetalWidth: cr.PetalWidth})
 	if err != nil {
 		global.Log.Error("could not greet: %v", err)
 		res.FailWithMessage("could not greet: %v", ctx)

@@ -17,4 +17,5 @@ func (router RouterGroup) UsersRouter() {
 
 	router.GET("/users/pb", userApi.PbListView)
 	router.POST("/users/iris", userApi.IrisPredictView)
+	router.POST("/users/file", userApi.UploadFileGrpcView)
 }

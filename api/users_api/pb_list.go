@@ -3,7 +3,7 @@ package users_api
 import (
 	"0049-server-go/global"
 	"0049-server-go/models/res"
-	pd "0049-server-go/proto"
+	pb "0049-server-go/proto"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -24,9 +24,9 @@ func (UserApi) PbListView(ctx *gin.Context) {
 		res.FailWithMessage("did not connect: %v", ctx)
 	}
 	defer conn.Close()
-	c := pd.NewFormatDataClient(conn)
+	c := pb.NewFormatDataClient(conn)
 
-	r, err := c.DoFormat(context.Background(), &pd.Actionrequest{Text: "test", Corpus: pd.Actionrequest_NEWS})
+	r, err := c.DoFormat(context.Background(), &pb.Actionrequest{Text: "test", Corpus: pb.Actionrequest_NEWS})
 	if err != nil {
 		global.Log.Error("could not greet: %v", err)
 		res.FailWithMessage("could not greet: %v", ctx)
