@@ -2,6 +2,7 @@ package users_api
 
 import (
 	"0049-server-go/global"
+	"0049-server-go/models/ctype"
 	"0049-server-go/models/res"
 	pb "0049-server-go/proto"
 	"context"
@@ -36,7 +37,7 @@ func (UserApi) UploadFileGrpcView(ctx *gin.Context) {
 	}
 	defer src.Close()
 
-	conn, err := grpc.Dial(address, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
+	conn, err := grpc.Dial(ctype.GRPC_ADDRESS, grpc.WithTransportCredentials(insecure.NewCredentials()), grpc.WithBlock())
 	if err != nil {
 		global.Log.Error("did not connect: %v", err)
 		res.FailWithMessage("did not connect: %v", ctx)

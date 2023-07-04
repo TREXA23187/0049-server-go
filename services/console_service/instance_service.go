@@ -3,10 +3,11 @@ package console_service
 import (
 	"0049-server-go/global"
 	"0049-server-go/models"
+	"0049-server-go/models/ctype"
 	"errors"
 )
 
-func (ConsoleService) CreateInstance(title, description, templateId, modelId, url, dataFile string) (*models.InstanceModel, error) {
+func (ConsoleService) CreateInstance(instanceId, instanceName, title, description, templateId, modelId, url, dataFile string, status ctype.Status) (*models.InstanceModel, error) {
 
 	// Check if the user exists
 	var instanceModel models.InstanceModel
@@ -16,12 +17,15 @@ func (ConsoleService) CreateInstance(title, description, templateId, modelId, ur
 	}
 
 	instanceModel = models.InstanceModel{
-		Title:       title,
-		Description: description,
-		TemplateID:  templateId,
-		ModelID:     modelId,
-		URL:         url,
-		DataFile:    dataFile,
+		InstanceID:   instanceId,
+		InstanceName: instanceName,
+		Title:        title,
+		Description:  description,
+		TemplateID:   templateId,
+		ModelID:      modelId,
+		URL:          url,
+		Status:       status,
+		DataFile:     dataFile,
 	}
 
 	// save to database

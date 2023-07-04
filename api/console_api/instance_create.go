@@ -3,10 +3,14 @@ package console_api
 import (
 	"0049-server-go/global"
 	"0049-server-go/models"
+	"0049-server-go/models/ctype"
 	"0049-server-go/models/res"
+	pb "0049-server-go/proto"
 	"0049-server-go/services/console_service"
-	"fmt"
+	"context"
 	"github.com/gin-gonic/gin"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 	"strconv"
 )
 
@@ -26,8 +30,6 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		return
 	}
 
-	fmt.Println(cr)
-
 	var templateModel models.TemplateModel
 	err := global.DB.Take(&templateModel, "name = ?", cr.Template).Error
 	if err != nil {
@@ -44,12 +46,26 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		return
 	}
 
-	instanceModel, err := console_service.ConsoleService{}.CreateInstance(cr.Title, cr.Description, strconv.Itoa(int(templateModel.ID)), strconv.Itoa(int(modelModel.ID)), cr.URL, cr.DataFile)
+	conn, err := grpc.Dial(ctype.GRPC_ADDRESS, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		global.Log.Error("did not connect: %v", err)
+		res.FailWithMessage("did not connect: %v", ctx)
+	}
+	defer conn.Close()
+	c := pb.NewInstanceServiceClient(conn)
+
+	r, err := c.CreateInstance(context.Background(), &pb.InstanceRequest{Template: cr.Template, Model: cr.Model, Url: cr.URL})
+	if err != nil {
+		global.Log.Error("could not greet: %v", err)
+		res.FailWithMessage("could not greet: %v", ctx)
+	}
+
+	instanceModel, err := console_service.ConsoleService{}.CreateInstance(r.InstanceId, r.InstanceName, cr.Title, cr.Description, strconv.Itoa(int(templateModel.ID)), strconv.Itoa(int(modelModel.ID)), cr.URL, cr.DataFile, ctype.StatusRunning)
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)
 		return
 	}
 
-	res.Ok(gin.H{"instance_id": instanceModel.ID}, "create instance successfully", ctx)
+	res.Ok(gin.H{"id": instanceModel.ID, "instance_id": r.InstanceId}, "create instance successfully", ctx)
 }
