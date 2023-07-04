@@ -19,6 +19,7 @@ var authWhiteList = []string{
 	"/api/v1/users/iris-POST",
 	"/api/v1/users/file-POST",
 	"/api/v1/console/instance-POST",
+	"/api/v1/console/instance/list-GET",
 }
 
 func JwtAuth() gin.HandlerFunc {
