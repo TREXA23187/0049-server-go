@@ -18,6 +18,9 @@ func MakeMigrations() {
 			&models.PermissionModel{},
 			&models.UserRoleModel{},
 			&models.RolePermissionModel{},
+			&models.InstanceModel{},
+			&models.TemplateModel{},
+			&models.ModelModel{},
 			//&log_stash.LogStashModel{},
 		)
 	if err != nil {

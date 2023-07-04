@@ -30,6 +30,7 @@ func InitRouter() *gin.Engine {
 	}
 
 	routerGroupApp.UsersRouter()
+	routerGroupApp.ConsoleRouter()
 
 	return router
 }
