@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	InstanceService_CreateInstance_FullMethodName  = "/proto.InstanceService/CreateInstance"
 	InstanceService_GetInstanceInfo_FullMethodName = "/proto.InstanceService/GetInstanceInfo"
+	InstanceService_OperateInstance_FullMethodName = "/proto.InstanceService/OperateInstance"
 )
 
 // InstanceServiceClient is the client API for InstanceService service.
@@ -29,6 +30,7 @@ const (
 type InstanceServiceClient interface {
 	CreateInstance(ctx context.Context, in *CreateInstanceRequest, opts ...grpc.CallOption) (*CreateInstanceResponse, error)
 	GetInstanceInfo(ctx context.Context, in *InstanceInfoRequest, opts ...grpc.CallOption) (*InstanceInfoResponse, error)
+	OperateInstance(ctx context.Context, in *OperateInstanceRequest, opts ...grpc.CallOption) (*OperateInstanceResponse, error)
 }
 
 type instanceServiceClient struct {
@@ -57,12 +59,22 @@ func (c *instanceServiceClient) GetInstanceInfo(ctx context.Context, in *Instanc
 	return out, nil
 }
 
+func (c *instanceServiceClient) OperateInstance(ctx context.Context, in *OperateInstanceRequest, opts ...grpc.CallOption) (*OperateInstanceResponse, error) {
+	out := new(OperateInstanceResponse)
+	err := c.cc.Invoke(ctx, InstanceService_OperateInstance_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // InstanceServiceServer is the server API for InstanceService service.
 // All implementations must embed UnimplementedInstanceServiceServer
 // for forward compatibility
 type InstanceServiceServer interface {
 	CreateInstance(context.Context, *CreateInstanceRequest) (*CreateInstanceResponse, error)
 	GetInstanceInfo(context.Context, *InstanceInfoRequest) (*InstanceInfoResponse, error)
+	OperateInstance(context.Context, *OperateInstanceRequest) (*OperateInstanceResponse, error)
 	mustEmbedUnimplementedInstanceServiceServer()
 }
 
@@ -75,6 +87,9 @@ func (UnimplementedInstanceServiceServer) CreateInstance(context.Context, *Creat
 }
 func (UnimplementedInstanceServiceServer) GetInstanceInfo(context.Context, *InstanceInfoRequest) (*InstanceInfoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetInstanceInfo not implemented")
+}
+func (UnimplementedInstanceServiceServer) OperateInstance(context.Context, *OperateInstanceRequest) (*OperateInstanceResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method OperateInstance not implemented")
 }
 func (UnimplementedInstanceServiceServer) mustEmbedUnimplementedInstanceServiceServer() {}
 
@@ -125,6 +140,24 @@ func _InstanceService_GetInstanceInfo_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _InstanceService_OperateInstance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OperateInstanceRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InstanceServiceServer).OperateInstance(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InstanceService_OperateInstance_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InstanceServiceServer).OperateInstance(ctx, req.(*OperateInstanceRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // InstanceService_ServiceDesc is the grpc.ServiceDesc for InstanceService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -139,6 +172,10 @@ var InstanceService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetInstanceInfo",
 			Handler:    _InstanceService_GetInstanceInfo_Handler,
+		},
+		{
+			MethodName: "OperateInstance",
+			Handler:    _InstanceService_OperateInstance_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
