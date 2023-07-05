@@ -4,10 +4,25 @@ import (
 	"0049-server-go/global"
 	"0049-server-go/models"
 	"0049-server-go/models/ctype"
+	pb "0049-server-go/proto"
+	"context"
 	"errors"
+	"fmt"
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
 )
 
-func (ConsoleService) CreateInstance(instanceId, instanceName, title, description, templateId, modelId, url, dataFile string, status ctype.Status) (*models.InstanceModel, error) {
+func (ConsoleService) GetMaxPort() int {
+	var maxPort int
+	err := global.DB.Table("instance_models").Select("max(port)").Row().Scan(&maxPort)
+	if err != nil {
+		return 15005
+	}
+
+	return maxPort
+}
+
+func (ConsoleService) CreateInstance(instanceId, instanceName, title, description, templateId, modelId, url, ip, status, dataFile string, port int) (*models.InstanceModel, error) {
 
 	// Check if the user exists
 	var instanceModel models.InstanceModel
@@ -24,6 +39,8 @@ func (ConsoleService) CreateInstance(instanceId, instanceName, title, descriptio
 		TemplateID:   templateId,
 		ModelID:      modelId,
 		URL:          url,
+		IP:           ip,
+		Port:         port,
 		Status:       status,
 		DataFile:     dataFile,
 	}
@@ -35,15 +52,25 @@ func (ConsoleService) CreateInstance(instanceId, instanceName, title, descriptio
 		return nil, err
 	}
 
-	//err = global.DB.Create(&models.UserRoleModel{
-	//	UserID: userModel.ID,
-	//	RoleID: roleID,
-	//}).Error
+	return &instanceModel, nil
+}
 
+func (ConsoleService) GetInstanceStatus(InstanceID string) (*pb.InstanceInfoResponse, error) {
+	conn, err := grpc.Dial(ctype.GRPC_ADDRESS, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
-		global.Log.Error(err)
+		global.Log.Error("did not connect: %v", err)
+		return nil, err
+	}
+	defer conn.Close()
+	c := pb.NewInstanceServiceClient(conn)
+
+	r, err := c.GetInstanceInfo(context.Background(), &pb.InstanceInfoRequest{InstanceId: InstanceID})
+	if err != nil {
+		global.Log.Error("could not greet: %v", err)
 		return nil, err
 	}
 
-	return &instanceModel, nil
+	fmt.Println(33, r)
+
+	return r, nil
 }
