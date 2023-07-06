@@ -7,7 +7,6 @@ import (
 	pb "0049-server-go/proto"
 	"context"
 	"errors"
-	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 )
@@ -69,8 +68,6 @@ func (ConsoleService) GetInstanceStatus(InstanceID string) (*pb.InstanceInfoResp
 		global.Log.Error("could not greet: %v", err)
 		return nil, err
 	}
-
-	fmt.Println(33, r)
 
 	return r, nil
 }
