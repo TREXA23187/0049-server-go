@@ -8,7 +8,7 @@ import (
 
 type Response struct {
 	Code int    `json:"code"`
-	Data any    `json:"data"`
+	Data any    `json:"upload"`
 	Msg  string `json:"msg"`
 }
 

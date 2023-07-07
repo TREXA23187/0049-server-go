@@ -4,7 +4,7 @@ import (
 	"github.com/dgrijalva/jwt-go/v4"
 )
 
-// JwtPayLoad Payload data in jwt
+// JwtPayLoad Payload upload in jwt
 type JwtPayLoad struct {
 	//Username string `json:"username"`
 	NickName string `json:"nick_name"`

@@ -32,8 +32,11 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		return
 	}
 
+	file, _ := ctx.FormFile("data_file")
+	fmt.Println(33, file)
+
 	var templateModel models.TemplateModel
-	err := global.DB.Take(&templateModel, "name = ?", cr.Template).Error
+	err := global.DB.Take(&templateModel, "title = ?", cr.Template).Error
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)
@@ -41,7 +44,7 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 	}
 
 	var modelModel models.ModelModel
-	err = global.DB.Take(&modelModel, "model_key = ?", cr.Model).Error
+	err = global.DB.Take(&modelModel, "name = ?", cr.Model).Error
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)
