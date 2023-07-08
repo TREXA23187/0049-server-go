@@ -17,12 +17,12 @@ import (
 )
 
 type InstanceCreateRequest struct {
-	Title       string `json:"title" binding:"required" msg:"Please enter title"`
-	Description string `json:"description" binding:"required" msg:"Please enter description"`
-	Template    string `json:"template"`
-	Model       string `json:"model"`
-	URL         string `json:"url"`
-	DataFile    string `json:"data_file"`
+	Title         string   `json:"title" binding:"required" msg:"Please enter title"`
+	Description   string   `json:"description" binding:"required" msg:"Please enter description"`
+	Template      string   `json:"template"`
+	Model         string   `json:"model"`
+	URL           string   `json:"url"`
+	DataFileNames []string `json:"data_file_names"`
 }
 
 func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
@@ -31,9 +31,6 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		res.FailWithValidMsg(err, &cr, ctx)
 		return
 	}
-
-	file, _ := ctx.FormFile("data_file")
-	fmt.Println(33, file)
 
 	var templateModel models.TemplateModel
 	err := global.DB.Take(&templateModel, "title = ?", cr.Template).Error
@@ -78,7 +75,7 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		res.FailWithMessage("could not greet: %v", ctx)
 	}
 
-	instanceModel, err := console_service.ConsoleService{}.CreateInstance(r.InstanceId, r.InstanceName, cr.Title, cr.Description, strconv.Itoa(int(templateModel.ID)), strconv.Itoa(int(modelModel.ID)), url, ip, "running", cr.DataFile, port)
+	instanceModel, err := console_service.ConsoleService{}.CreateInstance(r.InstanceId, r.InstanceName, cr.Title, cr.Description, strconv.Itoa(int(templateModel.ID)), strconv.Itoa(int(modelModel.ID)), url, ip, "running", cr.DataFileNames, port)
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)

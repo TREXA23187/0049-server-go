@@ -7,8 +7,11 @@ import (
 	pb "0049-server-go/proto"
 	"context"
 	"errors"
+	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
+	"os"
+	"path/filepath"
 )
 
 func (ConsoleService) GetMaxPort() int {
@@ -21,7 +24,7 @@ func (ConsoleService) GetMaxPort() int {
 	return maxPort
 }
 
-func (ConsoleService) CreateInstance(instanceId, instanceName, title, description, templateId, modelId, url, ip, status, dataFile string, port int) (*models.InstanceModel, error) {
+func (ConsoleService) CreateInstance(instanceId, instanceName, title, description, templateId, modelId, url, ip, status string, dataFileNames []string, port int) (*models.InstanceModel, error) {
 
 	// Check if the user exists
 	var instanceModel models.InstanceModel
@@ -30,18 +33,35 @@ func (ConsoleService) CreateInstance(instanceId, instanceName, title, descriptio
 		return nil, errors.New("title already exists")
 	}
 
+	dataFilePaths := make([]string, len(dataFileNames))
+
+	for _, fileName := range dataFileNames {
+		dist := filepath.Join("uploads/data_file", fileName)
+		_, err := os.Stat(dist)
+		if err != nil {
+			if os.IsNotExist(err) {
+				return nil, errors.New(fmt.Sprintf("File does not exist: %s", dist))
+			} else {
+				// some other error happened
+				return nil, errors.New(fmt.Sprintf("An error occurred while checking the file: %s", err))
+			}
+		}
+
+		dataFilePaths = append(dataFilePaths, dist)
+	}
+
 	instanceModel = models.InstanceModel{
-		InstanceID:   instanceId,
-		InstanceName: instanceName,
-		Title:        title,
-		Description:  description,
-		TemplateID:   templateId,
-		ModelID:      modelId,
-		URL:          url,
-		IP:           ip,
-		Port:         port,
-		Status:       status,
-		DataFile:     dataFile,
+		InstanceID:    instanceId,
+		InstanceName:  instanceName,
+		Title:         title,
+		Description:   description,
+		TemplateID:    templateId,
+		ModelID:       modelId,
+		URL:           url,
+		IP:            ip,
+		Port:          port,
+		Status:        status,
+		DataFilePaths: dataFilePaths,
 	}
 
 	// save to database

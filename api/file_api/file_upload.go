@@ -13,7 +13,7 @@ func (FileApi) FileUploadView(ctx *gin.Context) {
 	file, _ := ctx.FormFile("file") // 从请求中获取文件
 	fmt.Println(33, file.Filename)
 
-	dist := filepath.Join("upload/data_file", file.Filename)
+	dist := filepath.Join("uploads/data_file", file.Filename)
 	fmt.Println(dist)
 
 	// 保存文件到指定路径
