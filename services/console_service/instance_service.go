@@ -50,18 +50,25 @@ func (ConsoleService) CreateInstance(instanceId, instanceName, title, descriptio
 		dataFilePaths = append(dataFilePaths, dist)
 	}
 
+	var dataFilePath string
+	if len(dataFilePaths) > 0 {
+		dataFilePath = dataFilePaths[0]
+	} else {
+		dataFilePath = ""
+	}
+
 	instanceModel = models.InstanceModel{
-		InstanceID:    instanceId,
-		InstanceName:  instanceName,
-		Title:         title,
-		Description:   description,
-		TemplateID:    templateId,
-		ModelID:       modelId,
-		URL:           url,
-		IP:            ip,
-		Port:          port,
-		Status:        status,
-		DataFilePaths: dataFilePaths,
+		InstanceID:   instanceId,
+		InstanceName: instanceName,
+		Title:        title,
+		Description:  description,
+		TemplateID:   templateId,
+		ModelID:      modelId,
+		URL:          url,
+		IP:           ip,
+		Port:         port,
+		Status:       status,
+		DataFilePath: dataFilePath,
 	}
 
 	// save to database
