@@ -11,18 +11,21 @@ import (
 	"0049-server-go/utils/jwts"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"strings"
 )
 
 var authWhiteList = []string{
 	"/api/v1/users/login-POST",
 	"/api/v1/file/upload-POST",
+	"/api/v1/file/upload-GET",
 }
 
 func JwtAuth() gin.HandlerFunc {
 
 	return func(ctx *gin.Context) {
 		//whether this request is on the whitelist
-		inWhiteList := utils.InList(fmt.Sprintf("%s-%s", ctx.Request.URL, ctx.Request.Method), authWhiteList)
+		url := strings.Split(fmt.Sprintf("%s", ctx.Request.URL), "?")
+		inWhiteList := utils.InList(fmt.Sprintf("%s-%s", url[0], ctx.Request.Method), authWhiteList)
 		if inWhiteList {
 			ctx.Next()
 			return
