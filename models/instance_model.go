@@ -12,5 +12,6 @@ type InstanceModel struct {
 	IP           string `gorm:"size:18" json:"ip"`
 	Port         int    `gorm:"size:18" json:"port"`
 	Status       string `gorm:"size:36" json:"status"`
+	DataFileName string `gorm:"size:128" json:"data_file_name"`
 	DataFilePath string `gorm:"size:128" json:"data_file_path"`
 }

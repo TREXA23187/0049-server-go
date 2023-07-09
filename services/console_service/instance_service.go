@@ -33,28 +33,33 @@ func (ConsoleService) CreateInstance(instanceId, instanceName, title, descriptio
 		return nil, errors.New("title already exists")
 	}
 
-	dataFilePaths := make([]string, len(dataFileNames))
+	var dataFileName, dataFilePath string
+	var dataFilePaths []string
 
-	for _, fileName := range dataFileNames {
-		dist := filepath.Join("uploads/data_file", fileName)
-		_, err := os.Stat(dist)
-		if err != nil {
-			if os.IsNotExist(err) {
-				return nil, errors.New(fmt.Sprintf("File does not exist: %s", dist))
-			} else {
-				// some other error happened
-				return nil, errors.New(fmt.Sprintf("An error occurred while checking the file: %s", err))
+	if len(dataFileNames) > 0 {
+
+		dataFilePaths = make([]string, len(dataFileNames))
+
+		for i, fileName := range dataFileNames {
+			dist := filepath.Join("uploads/data_file", fileName)
+			_, err := os.Stat(dist)
+			if err != nil {
+				if os.IsNotExist(err) {
+					return nil, errors.New(fmt.Sprintf("File does not exist: %s", dist))
+				} else {
+					// some other error happened
+					return nil, errors.New(fmt.Sprintf("An error occurred while checking the file: %s", err))
+				}
 			}
+
+			dataFilePaths[i] = dist
 		}
 
-		dataFilePaths = append(dataFilePaths, dist)
-	}
-
-	var dataFilePath string
-	if len(dataFilePaths) > 0 {
 		dataFilePath = dataFilePaths[0]
+		dataFileName = dataFileNames[0]
 	} else {
 		dataFilePath = ""
+		dataFileName = ""
 	}
 
 	instanceModel = models.InstanceModel{
@@ -68,6 +73,7 @@ func (ConsoleService) CreateInstance(instanceId, instanceName, title, descriptio
 		IP:           ip,
 		Port:         port,
 		Status:       status,
+		DataFileName: dataFileName,
 		DataFilePath: dataFilePath,
 	}
 

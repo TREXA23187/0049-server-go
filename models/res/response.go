@@ -17,6 +17,11 @@ type ListResponse[T any] struct {
 	List  T     `json:"list"`
 }
 
+type FileResponse struct {
+	FileName string `json:"file_name"`
+	FileData []byte `json:"file_data"`
+}
+
 const (
 	Success = 0
 	Error   = -1
@@ -46,6 +51,14 @@ func OkWithList(list any, count int64, ctx *gin.Context) {
 	OkWithData(ListResponse[any]{
 		Count: count,
 		List:  list,
+	}, ctx)
+}
+func OkWithFile(fileName string, fileData []byte, ctx *gin.Context) {
+	ctx.Header("Content-Type", "application/octet-stream")
+
+	OkWithData(FileResponse{
+		FileName: fileName,
+		FileData: fileData,
 	}, ctx)
 }
 
