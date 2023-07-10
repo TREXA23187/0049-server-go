@@ -1,7 +1,6 @@
 package console_api
 
 import (
-	"0049-server-go/global"
 	"0049-server-go/models"
 	"0049-server-go/models/res"
 	"0049-server-go/services/common"
@@ -14,9 +13,6 @@ func (ConsoleApi) TaskListView(ctx *gin.Context) {
 		res.FailWithCode(res.ArgumentError, ctx)
 		return
 	}
-
-	var tasks []models.TaskModel
-	global.DB.Find(&tasks)
 
 	list, count, _ := common.ComList(models.TaskModel{}, common.Option{
 		PageInfo: page,

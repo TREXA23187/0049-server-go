@@ -4,7 +4,6 @@ import (
 	"0049-server-go/global"
 	"0049-server-go/models/res"
 	"encoding/csv"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"os"
 )
@@ -12,7 +11,9 @@ import (
 func (FileApi) FileInfoView(ctx *gin.Context) {
 
 	filePath := ctx.Query("file_path")
-	fmt.Println(filePath)
+	if filePath == "" {
+		res.FailWithCode(res.ArgumentError, ctx)
+	}
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -28,8 +29,6 @@ func (FileApi) FileInfoView(ctx *gin.Context) {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)
 	}
-
-	fmt.Println(header)
 
 	res.OkWithData(header, ctx)
 }

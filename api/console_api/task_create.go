@@ -9,9 +9,10 @@ import (
 )
 
 type TaskCreateRequest struct {
-	Name       string `json:"name" binding:"required" msg:"Please enter name"`
-	Type       string `json:"type"`
-	InstanceId string `json:"instance_id"`
+	Name          string `json:"name" binding:"required" msg:"Please enter name"`
+	Type          string `json:"type"`
+	InstanceId    uint   `json:"instance_id"`
+	TrainingLabel string `json:"training_label"`
 }
 
 func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
@@ -32,6 +33,11 @@ func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
 	taskModel.Name = cr.Name
 	taskModel.Type = ctype.TaskType(cr.Type)
 	taskModel.InstanceID = cr.InstanceId
+	taskModel.Status = ctype.StatusExited
+
+	if ctype.TaskType(cr.Type) == ctype.TrainingTask {
+		taskModel.TrainingLabel = cr.TrainingLabel
+	}
 
 	err = global.DB.Create(&taskModel).Error
 	if err != nil {

@@ -16,7 +16,7 @@ type Option struct {
 func ComList[T any](model T, option Option) (list []T, count int64, err error) {
 
 	DB := global.DB
-	if option.Debug {
+	if !option.Debug {
 		DB = global.DB.Session(&gorm.Session{Logger: global.MysqlLog})
 	}
 	if option.Sort == "" {
@@ -48,5 +48,6 @@ func ComList[T any](model T, option Option) (list []T, count int64, err error) {
 		offset = 0
 	}
 	err = query.Limit(option.Limit).Offset(offset).Order(option.Sort).Find(&list).Error
+
 	return list, count, err
 }
