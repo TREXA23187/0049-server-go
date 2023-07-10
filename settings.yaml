@@ -21,7 +21,12 @@ jwt:
   expires: 12   # Token expiration time /hour
   issuer: "49_project"
 redis:
-  ip: "127.0.0.1"
+  ip: 127.0.0.1
   port: 6379
   password: 1234
   pool_size: 100
+mq:
+  ip: 127.0.0.1
+  port: 5672
+  username: guest
+  password: guest

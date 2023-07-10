@@ -16,6 +16,8 @@ func main() {
 	global.DB = core.InitGorm()
 	// Connect Redis
 	global.Redis = core.ConnectRedis()
+	// Connect RabbitMQ
+	global.MQ = core.ConnectRabbitMQ()
 
 	// Command parameter binding
 	option := flag.Parse()
