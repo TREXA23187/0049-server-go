@@ -16,4 +16,7 @@ func (router RouterGroup) ConsoleRouter() {
 
 	router.POST("/console/model", consoleApi.ModelCreateView)
 	router.GET("/console/model/list", consoleApi.ModelListView)
+
+	router.POST("/console/task", consoleApi.TaskCreateView)
+	router.GET("/console/task/list", consoleApi.TaskListView)
 }
