@@ -7,11 +7,8 @@ import (
 	pb "0049-server-go/proto"
 	"context"
 	"errors"
-	"fmt"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"os"
-	"path/filepath"
 )
 
 func (ConsoleService) GetMaxPort() int {
@@ -33,48 +30,44 @@ func (ConsoleService) CreateInstance(instanceId, instanceName, title, descriptio
 		return nil, errors.New("title already exists")
 	}
 
-	var dataFileName, dataFilePath string
-	var dataFilePaths []string
-
-	if len(dataFileNames) > 0 {
-
-		dataFilePaths = make([]string, len(dataFileNames))
-
-		for i, fileName := range dataFileNames {
-			dist := filepath.Join("uploads/data_file", fileName)
-			_, err := os.Stat(dist)
-			if err != nil {
-				if os.IsNotExist(err) {
-					return nil, errors.New(fmt.Sprintf("File does not exist: %s", dist))
-				} else {
-					// some other error happened
-					return nil, errors.New(fmt.Sprintf("An error occurred while checking the file: %s", err))
-				}
-			}
-
-			dataFilePaths[i] = dist
-		}
-
-		dataFilePath = dataFilePaths[0]
-		dataFileName = dataFileNames[0]
-	} else {
-		dataFilePath = ""
-		dataFileName = ""
-	}
+	//var dataFileName, dataFilePath string
+	//var dataFilePaths []string
+	//
+	//if len(dataFileNames) > 0 {
+	//
+	//	dataFilePaths = make([]string, len(dataFileNames))
+	//
+	//	for i, fileName := range dataFileNames {
+	//		dist := filepath.Join("uploads/data_file", fileName)
+	//		_, err := os.Stat(dist)
+	//		if err != nil {
+	//			if os.IsNotExist(err) {
+	//				return nil, errors.New(fmt.Sprintf("File does not exist: %s", dist))
+	//			} else {
+	//				// some other error happened
+	//				return nil, errors.New(fmt.Sprintf("An error occurred while checking the file: %s", err))
+	//			}
+	//		}
+	//
+	//		dataFilePaths[i] = dist
+	//	}
+	//
+	//	dataFilePath = dataFilePaths[0]
+	//	dataFileName = dataFileNames[0]
+	//} else {
+	//	dataFilePath = ""
+	//	dataFileName = ""
+	//}
 
 	instanceModel = models.InstanceModel{
 		InstanceID:   instanceId,
 		InstanceName: instanceName,
 		Title:        title,
 		Description:  description,
-		TemplateID:   templateId,
-		ModelID:      modelId,
 		URL:          url,
 		IP:           ip,
 		Port:         port,
 		Status:       status,
-		DataFileName: dataFileName,
-		DataFilePath: dataFilePath,
 	}
 
 	// save to database

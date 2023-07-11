@@ -2,11 +2,10 @@ package console_api
 
 import (
 	"0049-server-go/global"
+	"0049-server-go/models"
 	"0049-server-go/models/res"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/streadway/amqp"
-	"log"
 )
 
 type TaskOperateRequest struct {
@@ -21,39 +20,48 @@ func (ConsoleApi) TaskOperateView(ctx *gin.Context) {
 		return
 	}
 
-	ch, err := global.MQ.Channel()
+	var task models.TaskModel
+	err := global.DB.Take(&task, "id=?", cr.TaskId).Error
 	if err != nil {
-		log.Fatal("Failed to open a channel", err)
-	}
-	defer ch.Close()
-
-	q, err := ch.QueueDeclare(
-		"task_queue",
-		true,
-		false,
-		false,
-		false,
-		nil,
-	)
-	if err != nil {
-		log.Fatal("Failed to declare a queue", err)
+		global.Log.Error(err)
+		res.FailWithMessage(err.Error(), ctx)
 	}
 
-	body := cr.TaskId
+	fmt.Println(33, task)
 
-	err = ch.Publish(
-		"",
-		q.Name,
-		false,
-		false,
-		amqp.Publishing{
-			DeliveryMode: amqp.Persistent,
-			ContentType:  "text/plain",
-			Body:         []byte(body),
-		})
-	if err != nil {
-		log.Fatal("Failed to publish a message", err)
-	}
+	//ch, err := global.MQ.Channel()
+	//if err != nil {
+	//	log.Fatal("Failed to open a channel", err)
+	//}
+	//defer ch.Close()
+	//
+	//q, err := ch.QueueDeclare(
+	//	"task_queue",
+	//	true,
+	//	false,
+	//	false,
+	//	false,
+	//	nil,
+	//)
+	//if err != nil {
+	//	log.Fatal("Failed to declare a queue", err)
+	//}
+	//
+	//body := cr.TaskId
+	//
+	//err = ch.Publish(
+	//	"",
+	//	q.Name,
+	//	false,
+	//	false,
+	//	amqp.Publishing{
+	//		DeliveryMode: amqp.Persistent,
+	//		ContentType:  "text/plain",
+	//		Body:         []byte(body),
+	//	})
+	//if err != nil {
+	//	log.Fatal("Failed to publish a message", err)
+	//}
 
 	res.OkWithMessage(fmt.Sprintf("%s the task successfully", string(cr.Operation)), ctx)
 }

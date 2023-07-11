@@ -28,7 +28,7 @@ func (FileApi) FileUploadView(ctx *gin.Context) {
 		global.Log.Error(err)
 		res.FailWithMessage("upload file failed", ctx)
 	} else {
-		res.OkWithNone(ctx)
+		res.OkWithData(gin.H{"file_path": dist}, ctx)
 	}
 
 }
