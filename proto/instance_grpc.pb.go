@@ -19,6 +19,7 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
+	InstanceService_CreateImage_FullMethodName     = "/proto.InstanceService/CreateImage"
 	InstanceService_CreateInstance_FullMethodName  = "/proto.InstanceService/CreateInstance"
 	InstanceService_GetInstanceInfo_FullMethodName = "/proto.InstanceService/GetInstanceInfo"
 	InstanceService_OperateInstance_FullMethodName = "/proto.InstanceService/OperateInstance"
@@ -28,6 +29,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InstanceServiceClient interface {
+	CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error)
 	CreateInstance(ctx context.Context, in *CreateInstanceRequest, opts ...grpc.CallOption) (*CreateInstanceResponse, error)
 	GetInstanceInfo(ctx context.Context, in *InstanceInfoRequest, opts ...grpc.CallOption) (*InstanceInfoResponse, error)
 	OperateInstance(ctx context.Context, in *OperateInstanceRequest, opts ...grpc.CallOption) (*OperateInstanceResponse, error)
@@ -39,6 +41,15 @@ type instanceServiceClient struct {
 
 func NewInstanceServiceClient(cc grpc.ClientConnInterface) InstanceServiceClient {
 	return &instanceServiceClient{cc}
+}
+
+func (c *instanceServiceClient) CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error) {
+	out := new(CreateImageResponse)
+	err := c.cc.Invoke(ctx, InstanceService_CreateImage_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *instanceServiceClient) CreateInstance(ctx context.Context, in *CreateInstanceRequest, opts ...grpc.CallOption) (*CreateInstanceResponse, error) {
@@ -72,6 +83,7 @@ func (c *instanceServiceClient) OperateInstance(ctx context.Context, in *Operate
 // All implementations must embed UnimplementedInstanceServiceServer
 // for forward compatibility
 type InstanceServiceServer interface {
+	CreateImage(context.Context, *CreateImageRequest) (*CreateImageResponse, error)
 	CreateInstance(context.Context, *CreateInstanceRequest) (*CreateInstanceResponse, error)
 	GetInstanceInfo(context.Context, *InstanceInfoRequest) (*InstanceInfoResponse, error)
 	OperateInstance(context.Context, *OperateInstanceRequest) (*OperateInstanceResponse, error)
@@ -82,6 +94,9 @@ type InstanceServiceServer interface {
 type UnimplementedInstanceServiceServer struct {
 }
 
+func (UnimplementedInstanceServiceServer) CreateImage(context.Context, *CreateImageRequest) (*CreateImageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateImage not implemented")
+}
 func (UnimplementedInstanceServiceServer) CreateInstance(context.Context, *CreateInstanceRequest) (*CreateInstanceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateInstance not implemented")
 }
@@ -102,6 +117,24 @@ type UnsafeInstanceServiceServer interface {
 
 func RegisterInstanceServiceServer(s grpc.ServiceRegistrar, srv InstanceServiceServer) {
 	s.RegisterService(&InstanceService_ServiceDesc, srv)
+}
+
+func _InstanceService_CreateImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateImageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InstanceServiceServer).CreateImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InstanceService_CreateImage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InstanceServiceServer).CreateImage(ctx, req.(*CreateImageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _InstanceService_CreateInstance_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -165,6 +198,10 @@ var InstanceService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "proto.InstanceService",
 	HandlerType: (*InstanceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateImage",
+			Handler:    _InstanceService_CreateImage_Handler,
+		},
 		{
 			MethodName: "CreateInstance",
 			Handler:    _InstanceService_CreateInstance_Handler,

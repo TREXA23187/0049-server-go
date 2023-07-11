@@ -22,6 +22,7 @@ func MakeMigrations() {
 			&models.TemplateModel{},
 			&models.ModelModel{},
 			&models.TaskModel{},
+			&models.ImageModel{},
 			//&log_stash.LogStashModel{},
 		)
 	if err != nil {

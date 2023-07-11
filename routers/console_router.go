@@ -20,4 +20,7 @@ func (router RouterGroup) ConsoleRouter() {
 	router.POST("/console/task", consoleApi.TaskCreateView)
 	router.GET("/console/task/list", consoleApi.TaskListView)
 	router.POST("/console/task/operate", consoleApi.TaskOperateView)
+
+	router.POST("/console/image", consoleApi.ImageCreateView)
+	router.GET("/console/image/list", consoleApi.ImageListView)
 }
