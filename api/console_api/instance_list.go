@@ -3,6 +3,7 @@ package console_api
 import (
 	"0049-server-go/global"
 	"0049-server-go/models"
+	"0049-server-go/models/ctype"
 	"0049-server-go/models/res"
 	"0049-server-go/services/common"
 	"0049-server-go/services/console_service"
@@ -11,8 +12,7 @@ import (
 
 type InstanceListResponse struct {
 	models.InstanceModel
-	Template string `json:"template"`
-	Model    string `json:"model"`
+	Task string `json:"task"`
 }
 
 func (ConsoleApi) InstanceListView(ctx *gin.Context) {
@@ -35,7 +35,7 @@ func (ConsoleApi) InstanceListView(ctx *gin.Context) {
 		if err != nil {
 			res.FailWithMessage(err.Error(), ctx)
 		}
-		list[i].Status = r.Status
+		list[i].Status = ctype.Status(r.Status)
 
 		//template, err := console_service.GetTemplateById(l.TemplateID)
 		//if err != nil {

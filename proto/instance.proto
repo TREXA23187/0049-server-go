@@ -11,9 +11,7 @@ service InstanceService {
 }
 
 message CreateInstanceRequest {
-  string template = 1;
-  string model = 2;
-  string url = 3;
+  string url = 1;
 }
 message CreateInstanceResponse{
   string instance_id = 1;

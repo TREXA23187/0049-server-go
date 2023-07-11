@@ -21,49 +21,21 @@ func (ConsoleService) GetMaxPort() int {
 	return maxPort
 }
 
-func (ConsoleService) CreateInstance(instanceId, instanceName, title, description, templateId, modelId, url, ip, status string, dataFileNames []string, port int) (*models.InstanceModel, error) {
+func (ConsoleService) CreateInstance(instanceId, instanceName, name, description, task, url, ip string, status ctype.Status, port int) (*models.InstanceModel, error) {
 
 	// Check if the user exists
 	var instanceModel models.InstanceModel
-	err := global.DB.Take(&instanceModel, "title = ?", title).Error
+	err := global.DB.Take(&instanceModel, "name = ?", name).Error
 	if err == nil {
 		return nil, errors.New("title already exists")
 	}
 
-	//var dataFileName, dataFilePath string
-	//var dataFilePaths []string
-	//
-	//if len(dataFileNames) > 0 {
-	//
-	//	dataFilePaths = make([]string, len(dataFileNames))
-	//
-	//	for i, fileName := range dataFileNames {
-	//		dist := filepath.Join("uploads/data_file", fileName)
-	//		_, err := os.Stat(dist)
-	//		if err != nil {
-	//			if os.IsNotExist(err) {
-	//				return nil, errors.New(fmt.Sprintf("File does not exist: %s", dist))
-	//			} else {
-	//				// some other error happened
-	//				return nil, errors.New(fmt.Sprintf("An error occurred while checking the file: %s", err))
-	//			}
-	//		}
-	//
-	//		dataFilePaths[i] = dist
-	//	}
-	//
-	//	dataFilePath = dataFilePaths[0]
-	//	dataFileName = dataFileNames[0]
-	//} else {
-	//	dataFilePath = ""
-	//	dataFileName = ""
-	//}
-
 	instanceModel = models.InstanceModel{
 		InstanceID:   instanceId,
 		InstanceName: instanceName,
-		Title:        title,
+		Name:         name,
 		Description:  description,
+		Task:         task,
 		URL:          url,
 		IP:           ip,
 		Port:         port,

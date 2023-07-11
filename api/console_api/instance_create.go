@@ -17,12 +17,10 @@ import (
 )
 
 type InstanceCreateRequest struct {
-	Title         string   `json:"title" binding:"required" msg:"Please enter title"`
-	Description   string   `json:"description" binding:"required" msg:"Please enter description"`
-	Template      string   `json:"template"`
-	Model         string   `json:"model"`
-	URL           string   `json:"url"`
-	DataFileNames []string `json:"data_file_names"`
+	Name        string `json:"name" binding:"required" msg:"Please enter name"`
+	Description string `json:"description" binding:"required" msg:"Please enter description"`
+	Task        string `json:"task"`
+	URL         string `json:"url"`
 }
 
 func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
@@ -32,16 +30,8 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		return
 	}
 
-	var templateModel models.TemplateModel
-	err := global.DB.Take(&templateModel, "title = ?", cr.Template).Error
-	if err != nil {
-		global.Log.Error(err)
-		res.FailWithMessage(err.Error(), ctx)
-		return
-	}
-
-	var modelModel models.ModelModel
-	err = global.DB.Take(&modelModel, "name = ?", cr.Model).Error
+	var taskModel models.TaskModel
+	err := global.DB.Take(&taskModel, "name = ?", cr.Task).Error
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)
@@ -69,13 +59,13 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		port, _ = strconv.Atoi(s[1])
 	}
 
-	r, err := c.CreateInstance(context.Background(), &pb.CreateInstanceRequest{Template: cr.Template, Model: cr.Model, Url: url})
+	r, err := c.CreateInstance(context.Background(), &pb.CreateInstanceRequest{Url: url})
 	if err != nil {
 		global.Log.Error("could not greet: %v", err)
 		res.FailWithMessage("could not greet: %v", ctx)
 	}
 
-	instanceModel, err := console_service.ConsoleService{}.CreateInstance(r.InstanceId, r.InstanceName, cr.Title, cr.Description, strconv.Itoa(int(templateModel.ID)), strconv.Itoa(int(modelModel.ID)), url, ip, "running", cr.DataFileNames, port)
+	instanceModel, err := console_service.ConsoleService{}.CreateInstance(r.InstanceId, r.InstanceName, cr.Name, cr.Description, cr.Task, url, ip, ctype.StatusRunning, port)
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)
