@@ -16,10 +16,12 @@ func (router RouterGroup) ConsoleRouter() {
 
 	router.POST("/console/model", consoleApi.ModelCreateView)
 	router.GET("/console/model/list", consoleApi.ModelListView)
+	router.DELETE("/console/model", consoleApi.ModelRemoveView)
 
 	router.POST("/console/task", consoleApi.TaskCreateView)
 	router.GET("/console/task/list", consoleApi.TaskListView)
 	router.POST("/console/task/operate", consoleApi.TaskOperateView)
+	router.DELETE("/console/task", consoleApi.TaskRemoveView)
 
 	router.POST("/console/image", consoleApi.ImageCreateView)
 	router.GET("/console/image/list", consoleApi.ImageListView)
