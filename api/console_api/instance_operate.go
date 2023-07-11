@@ -21,8 +21,8 @@ const (
 )
 
 type InstanceOperateRequest struct {
-	InstanceID string        `json:"instance_id" binding:"required" msg:"Please enter instance id"`
-	Operation  OperationType `json:"operation" binding:"required" msg:"Please enter operation"`
+	InstanceID string `json:"instance_id" binding:"required" msg:"Please enter instance id"`
+	Operation  string `json:"operation" binding:"required" msg:"Please enter operation"`
 }
 
 func (ConsoleApi) InstanceOperateView(ctx *gin.Context) {

@@ -14,10 +14,6 @@ func main() {
 	global.Log = core.InitLogger()
 	// Connect to database
 	global.DB = core.InitGorm()
-	// Connect Redis
-	global.Redis = core.ConnectRedis()
-	// Connect RabbitMQ
-	global.MQ = core.ConnectRabbitMQ()
 
 	// Command parameter binding
 	option := flag.Parse()
@@ -25,6 +21,13 @@ func main() {
 		flag.SwitchOption(option)
 		return
 	}
+
+	// Connect Redis
+	global.Redis = core.ConnectRedis()
+	// Connect RabbitMQ
+	global.MQ = core.ConnectRabbitMQ()
+
+	go core.InitRabbitMQConsuming()
 
 	router := routers.InitRouter()
 	addr := global.Config.System.Addr()
