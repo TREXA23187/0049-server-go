@@ -10,17 +10,17 @@ import (
 type RedisService struct {
 }
 
-const prefix = "logout_"
+const logoutPrefix = "logout_"
 
 // Logout For logout operations
 func Logout(token string, diff time.Duration) error {
-	err := global.Redis.Set(fmt.Sprintf("%s%s", prefix, token), "", diff).Err()
+	err := global.Redis.Set(fmt.Sprintf("%s%s", logoutPrefix, token), "", diff).Err()
 	return err
 }
 
 func CheckLogout(token string) bool {
-	keys := global.Redis.Keys(prefix + "*").Val()
-	if utils.InList(prefix+token, keys) {
+	keys := global.Redis.Keys(logoutPrefix + "*").Val()
+	if utils.InList(logoutPrefix+token, keys) {
 		return true
 	}
 

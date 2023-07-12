@@ -9,7 +9,7 @@ type InstanceModel struct {
 	URL          string       `gorm:"size:36" json:"url"`
 	IP           string       `gorm:"size:18" json:"ip"`
 	Port         int          `gorm:"size:18" json:"port"`
-	Task         string       `gorm:"size:36" json:"task"`
+	Image        string       `gorm:"size:36" json:"image"`
 	Status       ctype.Status `gorm:"size:36" json:"status"`
 	InstanceID   string       `gorm:"size:128" json:"instance_id"`
 	InstanceName string       `gorm:"size:128" json:"instance_name"`

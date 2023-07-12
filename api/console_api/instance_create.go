@@ -19,7 +19,7 @@ import (
 type InstanceCreateRequest struct {
 	Name        string `json:"name" binding:"required" msg:"Please enter name"`
 	Description string `json:"description" binding:"required" msg:"Please enter description"`
-	Task        string `json:"task"`
+	Image       string `json:"image" binding:"required" msg:"Please enter image"`
 	URL         string `json:"url"`
 }
 
@@ -30,8 +30,8 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		return
 	}
 
-	var taskModel models.TaskModel
-	err := global.DB.Take(&taskModel, "name = ?", cr.Task).Error
+	var imageModel models.ImageModel
+	err := global.DB.Take(&imageModel, "repository = ?", cr.Image).Error
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)
@@ -59,13 +59,13 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		port, _ = strconv.Atoi(s[1])
 	}
 
-	r, err := c.CreateInstance(context.Background(), &pb.CreateInstanceRequest{Url: url})
+	r, err := c.CreateInstance(context.Background(), &pb.CreateInstanceRequest{ImageName: cr.Image, Url: url})
 	if err != nil {
 		global.Log.Error("could not greet: %v", err)
 		res.FailWithMessage("could not greet: %v", ctx)
 	}
 
-	instanceModel, err := console_service.ConsoleService{}.CreateInstance(r.InstanceId, r.InstanceName, cr.Name, cr.Description, cr.Task, url, ip, ctype.StatusRunning, port)
+	instanceModel, err := console_service.ConsoleService{}.CreateInstance(r.InstanceId, r.InstanceName, cr.Name, cr.Description, cr.Image, url, ip, ctype.StatusRunning, port)
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)
