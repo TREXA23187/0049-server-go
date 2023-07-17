@@ -13,5 +13,5 @@ const (
 const (
 	ImageStatusBeingBuilt ImageStatus = "being built"
 	ImageStatusUnused     ImageStatus = "unused"
-	ImageStatusInSse      ImageStatus = "in use"
+	ImageStatusInUse      ImageStatus = "in use"
 )

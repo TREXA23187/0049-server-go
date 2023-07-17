@@ -72,5 +72,8 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		return
 	}
 
+	imageModel.Status = ctype.ImageStatusInUse
+	global.DB.Save(&imageModel)
+
 	res.Ok(gin.H{"id": instanceModel.ID, "instance_id": r.InstanceId}, "create instance successfully", ctx)
 }
