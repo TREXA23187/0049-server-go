@@ -24,6 +24,8 @@ func main() {
 
 	// Connect Redis
 	global.Redis = core.ConnectRedis()
+	// Connect gRPC
+	global.GRPC = core.ConnectGRPC()
 	// Connect RabbitMQ
 	global.MQ = core.ConnectRabbitMQ()
 

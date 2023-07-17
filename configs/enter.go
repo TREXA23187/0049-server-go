@@ -7,4 +7,5 @@ type Config struct {
 	Jwt    Jwt    `yaml:"jwt"`
 	Redis  Redis  `yaml:"redis"`
 	MQ     MQ     `yaml:"mq"`
+	GRPC   GRPC   `yaml:"grpc"`
 }

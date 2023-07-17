@@ -5,6 +5,7 @@ import (
 	"github.com/go-redis/redis"
 	"github.com/sirupsen/logrus"
 	"github.com/streadway/amqp"
+	"google.golang.org/grpc"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
 )
@@ -16,4 +17,5 @@ var (
 	MysqlLog logger.Interface
 	Redis    *redis.Client
 	MQ       *amqp.Connection
+	GRPC     *grpc.ClientConn
 )

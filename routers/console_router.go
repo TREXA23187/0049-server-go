@@ -26,4 +26,5 @@ func (router RouterGroup) ConsoleRouter() {
 	router.POST("/console/image", consoleApi.ImageCreateView)
 	router.GET("/console/image/list", consoleApi.ImageListView)
 	router.GET("/console/image/info", consoleApi.ImageInfoView)
+	router.DELETE("/console/image", consoleApi.ImageRemoveView)
 }
