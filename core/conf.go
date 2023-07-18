@@ -5,8 +5,8 @@ import (
 	"0049-server-go/global"
 	"fmt"
 	"gopkg.in/yaml.v2"
-	"io/ioutil"
 	"log"
+	"os"
 )
 
 const ConfigFile = "settings.yaml"
@@ -14,7 +14,7 @@ const ConfigFile = "settings.yaml"
 // InitConf is the function to initialize the configuration in yaml file.
 func InitConf() {
 	c := &configs.Config{}
-	yamlConf, err := ioutil.ReadFile(ConfigFile)
+	yamlConf, err := os.ReadFile(ConfigFile)
 	if err != nil {
 		panic(fmt.Errorf("get yamlConf err: %s", err))
 	}

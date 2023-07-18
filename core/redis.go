@@ -21,13 +21,16 @@ func ConnectRedisDB(db int) *redis.Client {
 		DB:       db,                 // use default DB
 		PoolSize: redisConf.PoolSize, // Connection pool size
 	})
+
 	_, cancel := context.WithTimeout(context.Background(), 500*time.Millisecond)
 	defer cancel()
+
 	_, err := rdb.Ping().Result()
 	if err != nil {
 		logrus.Error(err)
 		return nil
 	}
 
+	global.Log.Infof("The redis is running on: %s", global.Config.Redis.Addr())
 	return rdb
 }

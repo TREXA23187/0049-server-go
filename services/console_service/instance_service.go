@@ -7,8 +7,6 @@ import (
 	pb "0049-server-go/proto"
 	"context"
 	"errors"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 func (ConsoleService) GetMaxPort() int {
@@ -53,13 +51,7 @@ func (ConsoleService) CreateInstance(instanceId, instanceName, name, description
 }
 
 func (ConsoleService) GetInstanceStatus(InstanceID string) (*pb.InstanceInfoResponse, error) {
-	conn, err := grpc.Dial(ctype.GRPC_ADDRESS, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		global.Log.Error("did not connect: %v", err)
-		return nil, err
-	}
-	defer conn.Close()
-	c := pb.NewInstanceServiceClient(conn)
+	c := pb.NewInstanceServiceClient(global.GRPC)
 
 	r, err := c.GetInstanceInfo(context.Background(), &pb.InstanceInfoRequest{InstanceId: InstanceID})
 	if err != nil {

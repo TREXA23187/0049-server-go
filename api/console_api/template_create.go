@@ -8,7 +8,7 @@ import (
 )
 
 type TemplateCreateRequest struct {
-	Title   string `json:"title" binding:"required" msg:"Please enter title"`
+	Name    string `json:"name" binding:"required" msg:"Please enter name"`
 	Content string `json:"content" binding:"required" msg:"Please enter content"`
 }
 
@@ -20,14 +20,14 @@ func (ConsoleApi) TemplateCreateView(ctx *gin.Context) {
 	}
 
 	var templateModel models.TemplateModel
-	err := global.DB.Take(&templateModel, "title = ?", cr.Title).Error
+	err := global.DB.Take(&templateModel, "name = ?", cr.Name).Error
 	if err == nil {
 		global.Log.Error(err)
 		res.FailWithMessage("template title already exists", ctx)
 		return
 	}
 
-	templateModel.Title = cr.Title
+	templateModel.Name = cr.Name
 	templateModel.Content = cr.Content
 
 	err = global.DB.Create(&templateModel).Error

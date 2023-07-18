@@ -2,14 +2,11 @@ package console_api
 
 import (
 	"0049-server-go/global"
-	"0049-server-go/models/ctype"
 	"0049-server-go/models/res"
 	pb "0049-server-go/proto"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 type OperationType string
@@ -32,13 +29,7 @@ func (ConsoleApi) InstanceOperateView(ctx *gin.Context) {
 		return
 	}
 
-	conn, err := grpc.Dial(ctype.GRPC_ADDRESS, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil {
-		global.Log.Error("did not connect: %v", err)
-		res.FailWithMessage("did not connect: %v", ctx)
-	}
-	defer conn.Close()
-	c := pb.NewInstanceServiceClient(conn)
+	c := pb.NewInstanceServiceClient(global.GRPC)
 
 	r, err := c.OperateInstance(context.Background(), &pb.OperateInstanceRequest{InstanceId: cr.InstanceID, Operation: string(cr.Operation)})
 	if err != nil {
