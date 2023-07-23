@@ -35,5 +35,7 @@ func InitGorm() *gorm.DB {
 	sqlDB.SetMaxIdleConns(10)               // Maximum number of idle connections
 	sqlDB.SetMaxOpenConns(100)              // Maximum number of connections
 	sqlDB.SetConnMaxLifetime(time.Hour * 4) // The maximum lifetime of the connection, which cannot exceed the wait_timeout of MySQL
+
+	global.Log.Infof("The mysql is running on: %s", global.Config.Mysql.Host)
 	return db
 }

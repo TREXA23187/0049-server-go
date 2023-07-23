@@ -1,10 +1,15 @@
 package res
 
 import (
+	"embed"
 	"encoding/json"
 	"github.com/sirupsen/logrus"
-	"os"
+	"io/fs"
+	"log"
 )
+
+//go:embed error_code.json
+var embedErrorCodeFiles embed.FS
 
 type ErrorCode int
 
@@ -19,10 +24,15 @@ var ErrorMap = map[ErrorCode]string{}
 const file = "models/res/error_code.json"
 
 func InitErrorCode() {
-	bytes, err := os.ReadFile(file)
+	//bytes, err := os.ReadFile(file)
+	//if err != nil {
+	//	logrus.Error(err)
+	//	return
+	//}
+
+	bytes, err := fs.ReadFile(embedErrorCodeFiles, "error_code.json")
 	if err != nil {
-		logrus.Error(err)
-		return
+		log.Fatalf("Failed to read config file: %v", err)
 	}
 
 	err = json.Unmarshal(bytes, &ErrorMap)

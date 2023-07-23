@@ -27,7 +27,7 @@ func ConnectRedisDB(db int) *redis.Client {
 
 	_, err := rdb.Ping().Result()
 	if err != nil {
-		logrus.Error(err)
+		logrus.Error("redis err:", err)
 		return nil
 	}
 

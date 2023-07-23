@@ -16,6 +16,7 @@ import (
 
 var authWhiteList = []string{
 	"/api/v1/users/login-POST",
+	"/api/v1/users/user-POST",
 	"/api/v1/file/upload-POST",
 	"/api/v1/file/upload-GET",
 }
@@ -26,6 +27,7 @@ func JwtAuth() gin.HandlerFunc {
 		//whether this request is on the whitelist
 		url := strings.Split(fmt.Sprintf("%s", ctx.Request.URL), "?")
 		inWhiteList := utils.InList(fmt.Sprintf("%s-%s", url[0], ctx.Request.Method), authWhiteList)
+
 		if inWhiteList {
 			ctx.Next()
 			return

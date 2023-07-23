@@ -3,20 +3,25 @@ package core
 import (
 	"0049-server-go/configs"
 	"0049-server-go/global"
-	"fmt"
+	"embed"
 	"gopkg.in/yaml.v2"
+	"io/fs"
 	"log"
-	"os"
 )
 
 const ConfigFile = "settings.yaml"
 
 // InitConf is the function to initialize the configuration in yaml file.
-func InitConf() {
+func InitConf(embedConfigFiles embed.FS) {
 	c := &configs.Config{}
-	yamlConf, err := os.ReadFile(ConfigFile)
+	//yamlConf, err := os.ReadFile(ConfigFile)
+	//if err != nil {
+	//	panic(fmt.Errorf("get yamlConf err: %s", err))
+	//}
+
+	yamlConf, err := fs.ReadFile(embedConfigFiles, ConfigFile)
 	if err != nil {
-		panic(fmt.Errorf("get yamlConf err: %s", err))
+		log.Fatalf("get yamlConf err: %v", err)
 	}
 
 	err = yaml.Unmarshal(yamlConf, c)

@@ -11,10 +11,10 @@ import (
 )
 
 type UserCreateRequest struct {
-	NickName string     `json:"nick_name" binding:"required" msg:"Please enter nickname"`
-	UserName string     `json:"user_name" binding:"required" msg:"Please enter username"`
-	Password string     `json:"password" binding:"required" msg:"Please enter password"`
-	Role     ctype.Role `json:"role" binding:"required" msg:"Please enter role"`
+	UserName string `json:"user_name" binding:"required" msg:"Please enter username"`
+	NickName string `json:"nick_name"`
+	Password string `json:"password" binding:"required" msg:"Please enter password"`
+	Role     string `json:"role"`
 }
 
 func (UserApi) UserCreateView(ctx *gin.Context) {
@@ -24,15 +24,23 @@ func (UserApi) UserCreateView(ctx *gin.Context) {
 		return
 	}
 
+	var nickName string
+	if cr.NickName == "" {
+		nickName = cr.UserName
+	} else {
+		nickName = cr.NickName
+	}
+
+	fmt.Println(33, cr.Role)
 	var roleModel models.RoleModel
-	err := global.DB.Take(&roleModel, "role_type = ?", cr.Role).Error
+	err := global.DB.Take(&roleModel, "role_type = ?", ctype.StringToRoleType(cr.Role)).Error
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)
 		return
 	}
 
-	err = user_service.UserService{}.CreateUser(cr.UserName, cr.NickName, cr.Password, "", ctx.ClientIP(), roleModel.ID)
+	err = user_service.UserService{}.CreateUser(cr.UserName, nickName, cr.Password, "", ctx.ClientIP(), roleModel.ID)
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)

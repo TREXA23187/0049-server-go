@@ -5,11 +5,16 @@ import (
 	"0049-server-go/flag"
 	"0049-server-go/global"
 	"0049-server-go/routers"
+	"embed"
 )
 
+//go:embed settings.yaml
+var embedConfigFiles embed.FS
+
+// CGO_ENABLED=0 GOOS=linux go build -v -o server
 func main() {
 	// Read Configuration File
-	core.InitConf()
+	core.InitConf(embedConfigFiles)
 	// Initialize Log
 	global.Log = core.InitLogger()
 	// Connect to database
