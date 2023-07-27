@@ -31,7 +31,6 @@ func (UserApi) UserCreateView(ctx *gin.Context) {
 		nickName = cr.NickName
 	}
 
-	fmt.Println(33, cr.Role)
 	var roleModel models.RoleModel
 	err := global.DB.Take(&roleModel, "role_type = ?", ctype.StringToRoleType(cr.Role)).Error
 	if err != nil {

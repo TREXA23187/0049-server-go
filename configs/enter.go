@@ -8,4 +8,5 @@ type Config struct {
 	Redis  Redis  `yaml:"redis"`
 	MQ     MQ     `yaml:"mq"`
 	GRPC   GRPC   `yaml:"grpc"`
+	QiNiu  QiNiu  `yaml:"qi_niu"`
 }
