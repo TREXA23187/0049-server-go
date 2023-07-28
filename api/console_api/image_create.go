@@ -6,12 +6,12 @@ import (
 	"0049-server-go/models/ctype"
 	"0049-server-go/models/res"
 	pb "0049-server-go/proto"
+	"0049-server-go/services/file_service"
 	"0049-server-go/services/redis_service"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
-	"os"
 	"time"
 )
 
@@ -74,8 +74,8 @@ func (ConsoleApi) ImageCreateView(ctx *gin.Context) {
 	res.OkWithMessage("The image is being built", ctx)
 
 	go func() {
-		dataFileBytes, err := os.ReadFile(taskModel.DataFilePath)
-		modelFileBytes, err := os.ReadFile(modelModel.ModelFilePath)
+		dataFileBytes, err := file_service.GetQiNiuFileBytes(taskModel.DataFilePath)
+		modelFileBytes, err := file_service.GetQiNiuFileBytes(modelModel.ModelFilePath)
 
 		conn := pb.NewInstanceServiceClient(global.GRPC)
 
