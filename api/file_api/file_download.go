@@ -3,28 +3,30 @@ package file_api
 import (
 	"0049-server-go/global"
 	"0049-server-go/models/res"
-	"fmt"
 	"github.com/gin-gonic/gin"
-	"os"
+	"io"
+	"net/http"
 )
 
 func (FileApi) FileDownloadView(ctx *gin.Context) {
 
 	filePath := ctx.Query("file_path")
-	//fileName := ctx.Query("file_name")
 
-	_, err := os.Stat(filePath)
+	// Send GET request to OSS URL
+	resp, err := http.Get(filePath)
 	if err != nil {
-		if os.IsNotExist(err) {
-			global.Log.Error(fmt.Sprintf("File does not exist: %s", filePath))
-			res.FailWithMessage(fmt.Sprintf("File does not exist: %s", filePath), ctx)
-		} else {
-			// some other error happened
-			global.Log.Error(fmt.Sprintf("An error occurred while checking the file: %s", err))
-			res.FailWithMessage(fmt.Sprintf("An error occurred while checking the file: %s", err), ctx)
-		}
+		global.Log.Error(err)
+		res.FailWithMessage(err.Error(), ctx)
+		return
+	}
+	defer resp.Body.Close()
+
+	data, err := io.ReadAll(resp.Body)
+	if err != nil {
+		global.Log.Error(err)
+		res.FailWithMessage(err.Error(), ctx)
+		return
 	}
 
-	ctx.File(filePath)
-
+	ctx.Data(http.StatusOK, resp.Header.Get("Content-Type"), data)
 }

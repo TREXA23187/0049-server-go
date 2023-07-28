@@ -38,6 +38,6 @@ qi_niu:
   access_key: eV3Go_tP95TtjyR4J3Wj-pm6FZgtomx9fJov9tNp
   secret_key: 0N8lJPUuJWFvzFi854r5HgOjzxwDR-Gig1EkYTh9
   bucket: cxy-sing
-  cdn: rygkmaqix.sabkt.gdipper.com
+  cdn: http://rygkmaqix.sabkt.gdipper.com
   zone: as0
   size: 5
