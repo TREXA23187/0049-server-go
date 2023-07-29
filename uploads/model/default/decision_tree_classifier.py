@@ -43,15 +43,16 @@ def evaluate_classifier_model(classifier, x_test, y_test):
     }
 
 
-def run():
-    x, y = read_dataset("Species")
+def run(config):
+    x, y = read_dataset(config["target"])
     x_train, x_test, y_train, y_test = split_dataset(x, y)
-    model = train_dataset(x_train, y_train)
+
+    if not os.path.exists(model_path):
+        model = train_dataset(x_train, y_train)
+        save_model_file(model)
+    else:
+        with open(model_path, 'rb') as model_file:
+            model = pickle.load(model_file)
+
     evaluation = evaluate_classifier_model(model, x_test, y_test)
-
     return evaluation
-
-
-if __name__ == '__main__':
-    res = run()
-    print(res)

@@ -1,12 +1,13 @@
-import pandas
+import pandas as pd
+import numpy as np
 import os
 import sklearn
 from sklearn.model_selection import train_test_split
-from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeRegressor
 
 
 def read_dataset(target):
-    dataset = pandas.read_csv(os.path.join(os.path.dirname(__file__), "..", "data/data.csv"))
+    dataset = pd.read_csv(os.path.join(os.path.dirname(__file__), "..", "data/data.csv"))
 
     y = dataset[target]
     x = dataset.drop(target, axis=1)
@@ -19,7 +20,7 @@ def split_dataset(x, y):
 
 
 def train_dataset(x_train, y_train):
-    clf = KNeighborsClassifier()
+    clf = DecisionTreeRegressor()
     clf.fit(x_train, y_train)
 
     return clf
@@ -43,6 +44,26 @@ def evaluate_classifier_model(classifier, x_test, y_test):
     }
 
 
+def evaluate_regressor_model(classifier, x_test, y_test):
+    y_pred = classifier.predict(x_test)
+
+    mean_squared_error = sklearn.metrics.mean_squared_error(y_test, y_pred)
+    root_mean_squared_error = np.sqrt(sklearn.metrics.mean_squared_error(y_test, y_pred))
+    mean_absolute_error = sklearn.metrics.mean_absolute_error(y_test, y_pred)
+    r2_score = sklearn.metrics.r2_score(y_test, y_pred)
+    explained_variance_score = sklearn.metrics.explained_variance_score(y_test, y_pred)
+    max_error = sklearn.metrics.max_error(y_test, y_pred)
+
+    return {
+        "mean_squared_error": mean_squared_error,
+        "root_mean_squared_error": root_mean_squared_error,
+        "mean_absolute_error": mean_absolute_error,
+        "r2_score": r2_score,
+        "explained_variance_score": explained_variance_score,
+        "max_error": max_error,
+    }
+
+
 def run(config):
     x, y = read_dataset(config["target"])
     x_train, x_test, y_train, y_test = split_dataset(x, y)
@@ -54,5 +75,5 @@ def run(config):
         with open(model_path, 'rb') as model_file:
             model = pickle.load(model_file)
 
-    evaluation = evaluate_classifier_model(model, x_test, y_test)
+    evaluation = evaluate_regressor_model(model, x_test, y_test)
     return evaluation
