@@ -65,5 +65,4 @@ func UploadFile(data []byte, fileName string, prefix string) (filePath string, e
 		return "", err
 	}
 	return fmt.Sprintf("%s/%s", q.CDN, ret.Key), nil
-
 }

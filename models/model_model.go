@@ -3,6 +3,7 @@ package models
 type ModelModel struct {
 	MODEL
 	Name          string `gorm:"size:36" json:"name"`
+	Type          string `gorm:"size:36" json:"type"` // regression or classification
 	IsDefault     bool   `gorm:"size:16" json:"is_default"`
 	ModelFileName string `gorm:"size:128" json:"model_file_name"`
 	ModelFilePath string `gorm:"size:128" json:"model_file_path"`
