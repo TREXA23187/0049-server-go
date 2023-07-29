@@ -1,5 +1,7 @@
-import pandas
 import os
+import pickle
+
+import pandas
 import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
@@ -41,6 +43,13 @@ def evaluate_classifier_model(classifier, x_test, y_test):
         "f1_score": f1_score,
         "confusion_matrix": confusion_matrix.tolist()
     }
+
+
+model_path = os.path.join(os.path.dirname(__file__), "..", "model/model.pickle")
+
+
+def save_model_file(model):
+    pickle.dump(model, open(model_path, "wb"))
 
 
 def run(config):

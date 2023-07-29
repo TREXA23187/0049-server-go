@@ -1,4 +1,5 @@
 import os
+import pickle
 
 import numpy as np
 import pandas as pd
@@ -62,6 +63,13 @@ def evaluate_regressor_model(classifier, x_test, y_test):
         "explained_variance_score": explained_variance_score,
         "max_error": max_error,
     }
+
+
+model_path = os.path.join(os.path.dirname(__file__), "..", "model/model.pickle")
+
+
+def save_model_file(model):
+    pickle.dump(model, open(model_path, "wb"))
 
 
 def run(config):
