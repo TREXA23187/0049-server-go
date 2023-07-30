@@ -34,7 +34,7 @@ func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
 
 	taskModel.Name = cr.Name
 	taskModel.Type = ctype.TaskType(cr.Type)
-	taskModel.Status = ctype.StatusExited
+	taskModel.Status = ctype.TaskStatusPending
 
 	if ctype.TaskType(cr.Type) == ctype.TrainingTask {
 		taskModel.Model = cr.Model

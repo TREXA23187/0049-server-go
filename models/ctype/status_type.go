@@ -1,6 +1,7 @@
 package ctype
 
 type Status string
+type TaskStatus string
 type ImageStatus string
 
 const (
@@ -8,6 +9,13 @@ const (
 	StatusExited  Status = "exited"
 	StatusRemoved Status = "removed"
 	StatusFailed  Status = "failed"
+)
+
+const (
+	TaskStatusPending   TaskStatus = "pending"
+	TaskStatusRunning   TaskStatus = "running"
+	TaskStatusCompleted TaskStatus = "completed"
+	TaskStatusFailed    TaskStatus = "failed"
 )
 
 const (
