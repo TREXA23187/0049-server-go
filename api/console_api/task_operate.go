@@ -3,6 +3,7 @@ package console_api
 import (
 	"0049-server-go/global"
 	"0049-server-go/models"
+	"0049-server-go/models/ctype"
 	"0049-server-go/models/res"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -27,7 +28,15 @@ func (ConsoleApi) TaskOperateView(ctx *gin.Context) {
 		res.FailWithMessage(err.Error(), ctx)
 	}
 
-	fmt.Println(33, task)
+	if task.Status != ctype.TaskStatusCompleted && task.Status != ctype.TaskStatusFailed {
+		if cr.Operation == "success" {
+			task.Status = ctype.TaskStatusCompleted
+		} else if cr.Operation == "fail" {
+			task.Status = ctype.TaskStatusFailed
+		}
+
+		global.DB.Save(&task)
+	}
 
 	//ch, err := global.MQ.Channel()
 	//if err != nil {
@@ -63,5 +72,5 @@ func (ConsoleApi) TaskOperateView(ctx *gin.Context) {
 	//	log.Fatal("Failed to publish a message", err)
 	//}
 
-	res.OkWithMessage(fmt.Sprintf("%s the task successfully", string(cr.Operation)), ctx)
+	res.OkWithMessage(fmt.Sprintf("%s the task successfully", cr.Operation), ctx)
 }

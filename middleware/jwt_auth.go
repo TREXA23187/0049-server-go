@@ -19,6 +19,7 @@ var authWhiteList = []string{
 	"/api/v1/users/user-POST",
 	"/api/v1/file/upload-POST",
 	"/api/v1/file/upload-GET",
+	"/api/v1/console/task/operate-POST",
 }
 
 func JwtAuth() gin.HandlerFunc {
