@@ -9,4 +9,5 @@ type ModelModel struct {
 	ModelFilePath string `gorm:"size:128" json:"model_file_path"`
 	IsGithub      bool   `gorm:"size:16" json:"is_github"`
 	GithubLink    string `gorm:"size:128" json:"github_link"`
+	CreateUser    uint   `json:"create_user"`
 }

@@ -4,6 +4,7 @@ import (
 	"0049-server-go/global"
 	"0049-server-go/models"
 	"0049-server-go/models/res"
+	"0049-server-go/utils/jwts"
 	"github.com/gin-gonic/gin"
 )
 
@@ -13,6 +14,9 @@ type TemplateCreateRequest struct {
 }
 
 func (ConsoleApi) TemplateCreateView(ctx *gin.Context) {
+	_claims, _ := ctx.Get("claims")
+	claims := _claims.(*jwts.CustomClaims)
+
 	var cr TemplateCreateRequest
 	if err := ctx.ShouldBindJSON(&cr); err != nil {
 		res.FailWithValidMsg(err, &cr, ctx)
@@ -29,6 +33,7 @@ func (ConsoleApi) TemplateCreateView(ctx *gin.Context) {
 
 	templateModel.Name = cr.Name
 	templateModel.Content = cr.Content
+	templateModel.CreateUser = claims.UserID
 
 	err = global.DB.Create(&templateModel).Error
 	if err != nil {

@@ -9,8 +9,9 @@ import (
 
 type Option struct {
 	models.PageInfo
-	Debug bool
-	Likes []string // Fuzzy matching field
+	Debug      bool
+	Likes      []string // Fuzzy matching field
+	CreateUser uint
 }
 
 func ComList[T any](model T, option Option) (list []T, count int64, err error) {
@@ -32,6 +33,11 @@ func ComList[T any](model T, option Option) (list []T, count int64, err error) {
 		}
 
 		DB.Or(fmt.Sprintf("%s like ?", column), fmt.Sprintf("%%%s%%", option.Key))
+	}
+
+	if option.CreateUser != 0 {
+		DB.Where("create_user = ?", 0)
+		DB.Or("create_user = ?", option.CreateUser)
 	}
 
 	count = DB.Find(&list).RowsAffected

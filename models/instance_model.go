@@ -13,4 +13,5 @@ type InstanceModel struct {
 	Status       ctype.Status `gorm:"size:36" json:"status"`
 	InstanceID   string       `gorm:"size:128" json:"instance_id"`
 	InstanceName string       `gorm:"size:128" json:"instance_name"`
+	CreateUser   uint         `json:"create_user"`
 }

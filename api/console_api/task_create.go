@@ -5,6 +5,7 @@ import (
 	"0049-server-go/models"
 	"0049-server-go/models/ctype"
 	"0049-server-go/models/res"
+	"0049-server-go/utils/jwts"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,6 +19,9 @@ type TaskCreateRequest struct {
 }
 
 func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
+	_claims, _ := ctx.Get("claims")
+	claims := _claims.(*jwts.CustomClaims)
+
 	var cr TaskCreateRequest
 	if err := ctx.ShouldBindJSON(&cr); err != nil {
 		res.FailWithValidMsg(err, &cr, ctx)
@@ -35,6 +39,7 @@ func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
 	taskModel.Name = cr.Name
 	taskModel.Type = ctype.TaskType(cr.Type)
 	taskModel.Status = ctype.TaskStatusPending
+	taskModel.CreateUser = claims.UserID
 
 	if ctype.TaskType(cr.Type) == ctype.TrainingTask {
 		taskModel.Model = cr.Model

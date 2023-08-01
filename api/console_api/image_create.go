@@ -8,6 +8,7 @@ import (
 	pb "0049-server-go/proto"
 	"0049-server-go/services/file_service"
 	"0049-server-go/services/redis_service"
+	"0049-server-go/utils/jwts"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -23,6 +24,9 @@ type ImageCreateRequest struct {
 }
 
 func (ConsoleApi) ImageCreateView(ctx *gin.Context) {
+	_claims, _ := ctx.Get("claims")
+	claims := _claims.(*jwts.CustomClaims)
+
 	var cr ImageCreateRequest
 	if err := ctx.ShouldBindJSON(&cr); err != nil {
 		res.FailWithValidMsg(err, &cr, ctx)
@@ -64,6 +68,7 @@ func (ConsoleApi) ImageCreateView(ctx *gin.Context) {
 	imageModel.Repository = cr.Repository
 	imageModel.Tag = cr.Tag
 	imageModel.Status = ctype.ImageStatusBeingBuilt
+	imageModel.CreateUser = claims.UserID
 
 	err = global.DB.Create(&imageModel).Error
 	if err != nil {

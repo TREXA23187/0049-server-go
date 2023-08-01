@@ -10,4 +10,5 @@ type ImageModel struct {
 	Task       string            `gorm:"size:36" json:"task"`
 	ImageID    string            `gorm:"size:128" json:"image_id"`
 	Size       int64             `gorm:"size:36" json:"size"`
+	CreateUser uint              `json:"create_user"`
 }

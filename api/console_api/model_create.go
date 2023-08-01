@@ -4,11 +4,13 @@ import (
 	"0049-server-go/global"
 	"0049-server-go/models"
 	"0049-server-go/models/res"
+	"0049-server-go/utils/jwts"
 	"github.com/gin-gonic/gin"
 )
 
 type ModelCreateRequest struct {
 	Name           string   `json:"name" binding:"required" msg:"Please enter name"`
+	Type           string   `json:"type" binding:"required" msg:"Please enter type"`
 	CodeFile       string   `json:"code_file"`
 	ModelFileNames []string `json:"model_file_names"`
 	ModelFilePaths []string `json:"model_file_paths"`
@@ -17,6 +19,9 @@ type ModelCreateRequest struct {
 }
 
 func (ConsoleApi) ModelCreateView(ctx *gin.Context) {
+	_claims, _ := ctx.Get("claims")
+	claims := _claims.(*jwts.CustomClaims)
+
 	var cr ModelCreateRequest
 	if err := ctx.ShouldBindJSON(&cr); err != nil {
 		res.FailWithValidMsg(err, &cr, ctx)
@@ -32,6 +37,8 @@ func (ConsoleApi) ModelCreateView(ctx *gin.Context) {
 	}
 
 	modelModel.Name = cr.Name
+	modelModel.Type = cr.Type
+	modelModel.CreateUser = claims.UserID
 	modelModel.ModelFileName = cr.ModelFileNames[0]
 	modelModel.ModelFilePath = cr.ModelFilePaths[0]
 
