@@ -5,6 +5,8 @@ import (
 	"0049-server-go/models"
 	"0049-server-go/models/ctype"
 	"0049-server-go/models/res"
+	"0049-server-go/plugins/qiniu"
+	"encoding/base64"
 	"fmt"
 	"github.com/gin-gonic/gin"
 )
@@ -12,6 +14,7 @@ import (
 type TaskOperateRequest struct {
 	TaskId    string `json:"task_id" binding:"required" msg:"Please enter task id"`
 	Operation string `json:"operation" binding:"required" msg:"Please enter operation"`
+	ModelFile string `json:"model_file"`
 }
 
 func (ConsoleApi) TaskOperateView(ctx *gin.Context) {
@@ -34,43 +37,27 @@ func (ConsoleApi) TaskOperateView(ctx *gin.Context) {
 		} else if cr.Operation == "fail" {
 			task.Status = ctype.TaskStatusFailed
 		}
-
-		global.DB.Save(&task)
 	}
 
-	//ch, err := global.MQ.Channel()
-	//if err != nil {
-	//	log.Fatal("Failed to open a channel", err)
-	//}
-	//defer ch.Close()
-	//
-	//q, err := ch.QueueDeclare(
-	//	"task_queue",
-	//	true,
-	//	false,
-	//	false,
-	//	false,
-	//	nil,
-	//)
-	//if err != nil {
-	//	log.Fatal("Failed to declare a queue", err)
-	//}
-	//
-	//body := cr.TaskId
-	//
-	//err = ch.Publish(
-	//	"",
-	//	q.Name,
-	//	false,
-	//	false,
-	//	amqp.Publishing{
-	//		DeliveryMode: amqp.Persistent,
-	//		ContentType:  "text/plain",
-	//		Body:         []byte(body),
-	//	})
-	//if err != nil {
-	//	log.Fatal("Failed to publish a message", err)
-	//}
+	if cr.Operation == "success" {
+		trainedModelFile, err := base64.StdEncoding.DecodeString(cr.ModelFile)
+		if err != nil {
+			global.Log.Error(err)
+			res.FailWithMessage(err.Error(), ctx)
+		}
+
+		trainedModelFileName := fmt.Sprintf("task_%d.pickle", task.ID)
+		trainedModelFilePath, err := qiniu.UploadFile(trainedModelFile, trainedModelFileName, "trained_model_file")
+		if err != nil {
+			global.Log.Error(err)
+			res.FailWithMessage(err.Error(), ctx)
+		}
+
+		task.TrainedModelFileName = trainedModelFileName
+		task.TrainedModelFilePath = trainedModelFilePath
+	}
+
+	global.DB.Save(&task)
 
 	res.OkWithMessage(fmt.Sprintf("%s the task successfully", cr.Operation), ctx)
 }

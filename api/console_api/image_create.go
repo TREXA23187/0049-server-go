@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"log"
+	"strconv"
 	"time"
 )
 
@@ -79,7 +80,7 @@ func (ConsoleApi) ImageCreateView(ctx *gin.Context) {
 
 		conn := pb.NewInstanceServiceClient(global.GRPC)
 
-		imageConfig := &pb.ImageConfig{Type: string(taskModel.Type), Model: modelModel.Name, Target: taskModel.TrainingLabel, Template: "", Title: fmt.Sprintf("%s: %s", string(taskModel.Type), modelModel.Name)}
+		imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type), Model: modelModel.Name, Target: taskModel.TrainingLabel, Template: "", Title: fmt.Sprintf("%s: %s", string(taskModel.Type), modelModel.Name)}
 		r, err := conn.CreateImage(context.Background(), &pb.CreateImageRequest{Repository: cr.Repository, Tag: cr.Tag, DataFile: dataFileBytes, ModelFile: modelFileBytes, ImageConfig: imageConfig})
 		if err != nil {
 			global.Log.Error("could not greet: %v", err)

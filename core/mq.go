@@ -22,9 +22,15 @@ func ConnectRabbitMQ() *amqp.Connection {
 	return rabbitConn
 }
 
+func FailOnError(err error, msg string) {
+	if err != nil {
+		log.Fatalf("%s: %s", msg, err)
+	}
+}
+
 func InitRabbitMQConsuming() {
 	global.Log.Infof("The rabbitmq is listening on: %s", global.Config.MQ.Addr())
-	ch, _ := rabbitConn.Channel()
+	ch, _ := global.MQ.Channel()
 	defer ch.Close()
 
 	q, _ := ch.QueueDeclare(
@@ -49,7 +55,7 @@ func InitRabbitMQConsuming() {
 	messages, _ := ch.Consume(
 		q.Name, // queue
 		"",     // consumer
-		true,   // auto-ack
+		false,  // auto-ack
 		false,  // exclusive
 		false,  // no-local
 		false,  // no-wait
@@ -67,7 +73,7 @@ func InitRabbitMQConsuming() {
 			time.Sleep(t * time.Second)
 
 			log.Printf("Done")
-			err = d.Ack(false)
+			err := d.Ack(false)
 			if err != nil {
 				log.Println("Failed to send Ack", err)
 				return

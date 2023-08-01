@@ -14,11 +14,12 @@ service InstanceService {
 }
 
 message ImageConfig {
-  string type = 1;
-  string model = 2;
-  string target = 3;
-  string template = 4;
-  string title = 5;
+  string task_id = 1;
+  string type = 2;
+  string model = 3;
+  string target = 4;
+  string template = 5;
+  string title = 6;
 }
 
 message CreateImageRequest {
