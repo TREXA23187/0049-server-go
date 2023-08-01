@@ -10,12 +10,14 @@ import (
 )
 
 type TaskCreateRequest struct {
-	Name          string   `json:"name" binding:"required" msg:"Please enter task name"`
-	Type          string   `json:"type" binding:"required" msg:"Please enter task type"`
-	Model         string   `json:"model"`
-	DataFileNames []string `json:"data_file_names"`
-	DataFilePaths []string `json:"data_file_paths"`
-	TrainingLabel string   `json:"training_label"`
+	Name                 string   `json:"name" binding:"required" msg:"Please enter task name"`
+	Type                 string   `json:"type" binding:"required" msg:"Please enter task type"`
+	Model                string   `json:"model"`
+	DataFileNames        []string `json:"data_file_names"`
+	DataFilePaths        []string `json:"data_file_paths"`
+	TrainedModelFileName string   `json:"trained_model_file_name"`
+	TrainedModelFilePath string   `json:"trained_model_file_path"`
+	TrainingLabel        string   `json:"training_label"`
 }
 
 func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
@@ -48,6 +50,11 @@ func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
 		taskModel.DataFileName = cr.DataFileNames[0]
 		taskModel.DataFilePath = cr.DataFilePaths[0]
 
+	}
+
+	if ctype.TaskType(cr.Type) == ctype.DeploymentTask {
+		taskModel.TrainedModelFileName = cr.TrainedModelFileName
+		taskModel.TrainedModelFilePath = cr.TrainedModelFilePath
 	}
 
 	err = global.DB.Create(&taskModel).Error
