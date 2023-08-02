@@ -14,6 +14,7 @@ func (router RouterGroup) ConsoleRouter() {
 	router.GET("/console/template/list", consoleApi.TemplateListView)
 	router.DELETE("/console/template", consoleApi.TemplateRemoveView)
 	router.GET("/console/template/info", consoleApi.TemplateInfoView)
+	router.PUT("/console/template", consoleApi.TemplateUpdateView)
 
 	router.POST("/console/model", consoleApi.ModelCreateView)
 	router.GET("/console/model/list", consoleApi.ModelListView)
