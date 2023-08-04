@@ -13,7 +13,7 @@ import (
 
 type InstanceListResponse struct {
 	models.InstanceModel
-	Task string `json:"task"`
+	TaskType string `json:"task_type"`
 }
 
 func (ConsoleApi) InstanceListView(ctx *gin.Context) {
@@ -34,14 +34,35 @@ func (ConsoleApi) InstanceListView(ctx *gin.Context) {
 		CreateUser: claims.UserID,
 	})
 
-	//resultList := make([]InstanceListResponse, len(list))
+	resultList := make([]InstanceListResponse, len(list))
 	for i, l := range list {
 		r, err := console_service.ConsoleService{}.GetInstanceStatus(l.InstanceID)
 		if err != nil {
 			res.FailWithMessage(err.Error(), ctx)
 		}
 		list[i].Status = ctype.Status(r.Status)
+
+		var imageModel models.ImageModel
+		err = global.DB.Take(&imageModel, "repository = ?", list[i].Image).Error
+		if err != nil {
+			global.Log.Error(err)
+			res.FailWithMessage(err.Error(), ctx)
+			return
+		}
+
+		var taskModel models.TaskModel
+		err = global.DB.Take(&taskModel, "name = ?", imageModel.Task).Error
+		if err != nil {
+			global.Log.Error(err)
+			res.FailWithMessage(err.Error(), ctx)
+			return
+		}
+
+		resultList[i] = InstanceListResponse{
+			list[i],
+			string(taskModel.Type),
+		}
 	}
 
-	res.OkWithList(list, count, ctx)
+	res.OkWithList(resultList, count, ctx)
 }

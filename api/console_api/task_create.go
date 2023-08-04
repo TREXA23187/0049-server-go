@@ -6,6 +6,7 @@ import (
 	"0049-server-go/models/ctype"
 	"0049-server-go/models/res"
 	"0049-server-go/utils/jwts"
+	"encoding/json"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,6 +19,7 @@ type TaskCreateRequest struct {
 	TrainedModelFileName string   `json:"trained_model_file_name"`
 	TrainedModelFilePath string   `json:"trained_model_file_path"`
 	TrainingLabel        string   `json:"training_label"`
+	TrainingDataLabel    []string `json:"training_data_label"`
 }
 
 func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
@@ -46,6 +48,14 @@ func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
 	if ctype.TaskType(cr.Type) == ctype.TrainingTask {
 		taskModel.Model = cr.Model
 		taskModel.TrainingLabel = cr.TrainingLabel
+
+		trainingDataLabel, err := json.Marshal(cr.TrainingDataLabel)
+		if err != nil {
+			global.Log.Error(err)
+			res.FailWithMessage(err.Error(), ctx)
+			return
+		}
+		taskModel.TrainingDataLabel = string(trainingDataLabel)
 
 		taskModel.DataFileName = cr.DataFileNames[0]
 		taskModel.DataFilePath = cr.DataFilePaths[0]
