@@ -1,17 +1,17 @@
 import os
 import pickle
 
-import pandas
+import pandas as pd
 import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
 
 
-def read_dataset(target):
-    dataset = pandas.read_csv(os.path.join(os.path.dirname(__file__), "..", "data/data.csv"))
+def read_dataset(data, target):
+    dataset = pd.read_csv(os.path.join(os.path.dirname(__file__), "..", "data/data.csv"))
 
     y = dataset[target]
-    x = dataset.drop(target, axis=1)
+    x = dataset[data]
 
     return x, y
 
@@ -53,7 +53,7 @@ def save_model_file(model):
 
 
 def run(config):
-    x, y = read_dataset(config["target"])
+    x, y = read_dataset(config["dataLabel"], config["targetLabel"])
     x_train, x_test, y_train, y_test = split_dataset(x, y)
 
     if not os.path.exists(model_path):

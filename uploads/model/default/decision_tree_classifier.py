@@ -1,17 +1,17 @@
 import os
 import pickle
 
-import pandas
+import pandas as pd
 import sklearn
 from sklearn.model_selection import train_test_split
 from sklearn.tree import DecisionTreeClassifier
 
 
-def read_dataset(target):
-    dataset = pandas.read_csv(os.path.join(os.path.dirname(__file__), "..", "data/data.csv"))
+def read_dataset(data, target):
+    dataset = pd.read_csv(os.path.join(os.path.dirname(__file__), "..", "data/data.csv"))
 
     y = dataset[target]
-    x = dataset.drop(target, axis=1)
+    x = dataset[data]
 
     return x, y
 
@@ -29,9 +29,7 @@ def train_dataset(x_train, y_train):
 
 def evaluate_classifier_model(classifier, x_test, y_test):
     y_pred = classifier.predict(x_test)
-    y_score = classifier.predict_proba(x_test)
 
-    # ------------ 1. Accuracy ------------ #
     accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
     recall = sklearn.metrics.recall_score(y_test, y_pred, average="micro")
     f1_score = sklearn.metrics.f1_score(y_test, y_pred, average="micro")
@@ -53,7 +51,7 @@ def save_model_file(model):
 
 
 def run(config):
-    x, y = read_dataset(config["target"])
+    x, y = read_dataset(config["dataLabel"], config["targetLabel"])
     x_train, x_test, y_train, y_test = split_dataset(x, y)
 
     if not os.path.exists(model_path):
