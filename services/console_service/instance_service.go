@@ -19,7 +19,7 @@ func (ConsoleService) GetMaxPort() int {
 	return maxPort
 }
 
-func (ConsoleService) CreateInstance(instanceId, instanceName, name, description, image, url, ip string, status ctype.Status, port int) (*models.InstanceModel, error) {
+func (ConsoleService) CreateInstance(instanceId, instanceName, name, description, image, url, ip string, status ctype.Status, port int, createUser uint) (*models.InstanceModel, error) {
 
 	// Check if the user exists
 	var instanceModel models.InstanceModel
@@ -38,6 +38,7 @@ func (ConsoleService) CreateInstance(instanceId, instanceName, name, description
 		IP:           ip,
 		Port:         port,
 		Status:       status,
+		CreateUser:   createUser,
 	}
 
 	// save to database

@@ -7,6 +7,7 @@ import (
 	"0049-server-go/models/res"
 	pb "0049-server-go/proto"
 	"0049-server-go/services/console_service"
+	"0049-server-go/utils/jwts"
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
@@ -24,6 +25,9 @@ type InstanceCreateRequest struct {
 }
 
 func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
+	_claims, _ := ctx.Get("claims")
+	claims := _claims.(*jwts.CustomClaims)
+
 	var cr InstanceCreateRequest
 	if err := ctx.ShouldBindJSON(&cr); err != nil {
 		res.FailWithValidMsg(err, &cr, ctx)
@@ -65,7 +69,7 @@ func (ConsoleApi) InstanceCreateView(ctx *gin.Context) {
 		res.FailWithMessage("could not greet: %v", ctx)
 	}
 
-	instanceModel, err := console_service.ConsoleService{}.CreateInstance(r.InstanceId, r.InstanceName, cr.Name, cr.Description, cr.Image, url, ip, ctype.StatusRunning, port)
+	instanceModel, err := console_service.ConsoleService{}.CreateInstance(r.InstanceId, r.InstanceName, cr.Name, cr.Description, cr.Image, url, ip, ctype.StatusRunning, port, claims.UserID)
 	if err != nil {
 		global.Log.Error(err)
 		res.FailWithMessage(err.Error(), ctx)

@@ -9,6 +9,8 @@ func (router RouterGroup) ConsoleRouter() {
 	router.GET("/console/instance/info", consoleApi.InstanceInfoView)
 	router.POST("/console/instance/operate", consoleApi.InstanceOperateView)
 	router.DELETE("/console/instance", consoleApi.InstanceRemoveView)
+	router.POST("/console/instance/link", consoleApi.InstanceLinkCreateView)
+	router.POST("/console/instance/link/info", consoleApi.InstanceLinkParseView)
 
 	router.POST("/console/template", consoleApi.TemplateCreateView)
 	router.GET("/console/template/list", consoleApi.TemplateListView)

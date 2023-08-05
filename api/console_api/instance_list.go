@@ -13,7 +13,9 @@ import (
 
 type InstanceListResponse struct {
 	models.InstanceModel
+	Task     string `json:"task"`
 	TaskType string `json:"task_type"`
+	Template string `json:"template"`
 }
 
 func (ConsoleApi) InstanceListView(ctx *gin.Context) {
@@ -60,7 +62,9 @@ func (ConsoleApi) InstanceListView(ctx *gin.Context) {
 
 		resultList[i] = InstanceListResponse{
 			list[i],
+			taskModel.Name,
 			string(taskModel.Type),
+			taskModel.Template,
 		}
 	}
 
