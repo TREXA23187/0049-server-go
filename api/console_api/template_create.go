@@ -42,5 +42,5 @@ func (ConsoleApi) TemplateCreateView(ctx *gin.Context) {
 		return
 	}
 
-	res.OkWithMessage("create template successfully", ctx)
+	res.Ok(gin.H{"templateId": templateModel.ID}, "create template successfully", ctx)
 }

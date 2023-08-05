@@ -50,11 +50,13 @@ func (ConsoleApi) ImageCreateView(ctx *gin.Context) {
 	}
 
 	var modelModel models.ModelModel
-	err = global.DB.Take(&modelModel, "name = ?", taskModel.Model).Error
-	if err != nil {
-		global.Log.Error(err)
-		res.FailWithMessage("model does not exist", ctx)
-		return
+	if taskModel.Type == ctype.TrainingTask {
+		err = global.DB.Take(&modelModel, "name = ?", taskModel.Model).Error
+		if err != nil {
+			global.Log.Error(err)
+			res.FailWithMessage("model does not exist", ctx)
+			return
+		}
 	}
 
 	err = redis_service.StartBuildingImage(cr.Repository, time.Minute*10)
@@ -80,33 +82,66 @@ func (ConsoleApi) ImageCreateView(ctx *gin.Context) {
 	res.OkWithMessage("The image is being built", ctx)
 
 	go func() {
-		dataFileBytes, err := file_service.GetQiNiuFileBytes(taskModel.DataFilePath)
-		modelFileBytes, err := file_service.GetQiNiuFileBytes(modelModel.ModelFilePath)
+		if taskModel.Type == ctype.TrainingTask {
+			dataFileBytes, err := file_service.GetQiNiuFileBytes(taskModel.DataFilePath)
+			modelFileBytes, err := file_service.GetQiNiuFileBytes(modelModel.ModelFilePath)
 
-		conn := pb.NewInstanceServiceClient(global.GRPC)
+			conn := pb.NewInstanceServiceClient(global.GRPC)
 
-		imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type), Model: modelModel.Name, DataLabel: taskModel.TrainingDataLabel, TargetLabel: taskModel.TrainingLabel, Template: "", Title: fmt.Sprintf("%s: %s", string(taskModel.Type), modelModel.Name)}
-		r, err := conn.CreateImage(context.Background(), &pb.CreateImageRequest{Repository: cr.Repository, Tag: cr.Tag, DataFile: dataFileBytes, ModelFile: modelFileBytes, ImageConfig: imageConfig})
-		if err != nil {
-			global.Log.Error("could not greet: %v", err)
-			res.FailWithMessage("could not greet: %v", ctx)
+			imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type), Model: modelModel.Name, DataLabel: taskModel.TrainingDataLabel, TargetLabel: taskModel.TrainingLabel, Template: "", Title: fmt.Sprintf("%s: %s", string(taskModel.Type), modelModel.Name)}
+			r, err := conn.CreateTrainingImage(context.Background(), &pb.CreateTrainingImageRequest{Repository: cr.Repository, Tag: cr.Tag, DataFile: dataFileBytes, ModelFile: modelFileBytes, ImageConfig: imageConfig})
+			if err != nil {
+				global.Log.Error("could not greet: %v", err)
+				res.FailWithMessage("could not greet: %v", ctx)
+			}
+
+			var builtImageModel models.ImageModel
+			global.DB.Take(&builtImageModel, "repository = ?", cr.Repository)
+
+			builtImageModel.Status = ctype.ImageStatusUnused
+			builtImageModel.ImageID = r.ImageId
+			builtImageModel.Size = r.ImageSize
+
+			global.DB.Save(&builtImageModel)
+
+			err = redis_service.FinishBuildingImage(cr.Repository)
+			if err != nil {
+				log.Println("fail to finish building", err)
+				return
+			}
+
+			res.OkWithMessage("create image successfully", ctx)
 		}
 
-		var builtImageModel models.ImageModel
-		global.DB.Take(&builtImageModel, "repository = ?", cr.Repository)
+		if taskModel.Type == ctype.DeploymentTask {
+			trainedModelFileBytes, err := file_service.GetQiNiuFileBytes(taskModel.TrainedModelFilePath)
 
-		builtImageModel.Status = ctype.ImageStatusUnused
-		builtImageModel.ImageID = r.ImageId
-		builtImageModel.Size = r.ImageSize
+			conn := pb.NewInstanceServiceClient(global.GRPC)
 
-		global.DB.Save(&builtImageModel)
+			imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type), Model: "", DataLabel: "", TargetLabel: "", Template: "", Title: ""}
+			r, err := conn.CreateDeploymentImage(context.Background(), &pb.CreateDeploymentImageRequest{Repository: cr.Repository, Tag: cr.Tag, Template: "", TrainedModelFile: trainedModelFileBytes, ImageConfig: imageConfig})
+			if err != nil {
+				global.Log.Error("could not greet: %v", err)
+				res.FailWithMessage("could not greet: %v", ctx)
+			}
 
-		err = redis_service.FinishBuildingImage(cr.Repository)
-		if err != nil {
-			log.Println("fail to finish building", err)
-			return
+			var builtImageModel models.ImageModel
+			global.DB.Take(&builtImageModel, "repository = ?", cr.Repository)
+
+			builtImageModel.Status = ctype.ImageStatusUnused
+			builtImageModel.ImageID = r.ImageId
+			builtImageModel.Size = r.ImageSize
+
+			global.DB.Save(&builtImageModel)
+
+			err = redis_service.FinishBuildingImage(cr.Repository)
+			if err != nil {
+				log.Println("fail to finish building", err)
+				return
+			}
+
+			res.OkWithMessage("create image successfully", ctx)
 		}
-
-		res.OkWithMessage("create image successfully", ctx)
 	}()
+
 }

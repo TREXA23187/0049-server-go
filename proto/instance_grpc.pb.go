@@ -19,18 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	InstanceService_CreateImage_FullMethodName     = "/proto.InstanceService/CreateImage"
-	InstanceService_DeleteImage_FullMethodName     = "/proto.InstanceService/DeleteImage"
-	InstanceService_CreateInstance_FullMethodName  = "/proto.InstanceService/CreateInstance"
-	InstanceService_GetInstanceInfo_FullMethodName = "/proto.InstanceService/GetInstanceInfo"
-	InstanceService_OperateInstance_FullMethodName = "/proto.InstanceService/OperateInstance"
+	InstanceService_CreateTrainingImage_FullMethodName   = "/proto.InstanceService/CreateTrainingImage"
+	InstanceService_CreateDeploymentImage_FullMethodName = "/proto.InstanceService/CreateDeploymentImage"
+	InstanceService_DeleteImage_FullMethodName           = "/proto.InstanceService/DeleteImage"
+	InstanceService_CreateInstance_FullMethodName        = "/proto.InstanceService/CreateInstance"
+	InstanceService_GetInstanceInfo_FullMethodName       = "/proto.InstanceService/GetInstanceInfo"
+	InstanceService_OperateInstance_FullMethodName       = "/proto.InstanceService/OperateInstance"
 )
 
 // InstanceServiceClient is the client API for InstanceService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type InstanceServiceClient interface {
-	CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error)
+	CreateTrainingImage(ctx context.Context, in *CreateTrainingImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error)
+	CreateDeploymentImage(ctx context.Context, in *CreateDeploymentImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error)
 	DeleteImage(ctx context.Context, in *DeleteImageRequest, opts ...grpc.CallOption) (*DeleteImageResponse, error)
 	CreateInstance(ctx context.Context, in *CreateInstanceRequest, opts ...grpc.CallOption) (*CreateInstanceResponse, error)
 	GetInstanceInfo(ctx context.Context, in *InstanceInfoRequest, opts ...grpc.CallOption) (*InstanceInfoResponse, error)
@@ -45,9 +47,18 @@ func NewInstanceServiceClient(cc grpc.ClientConnInterface) InstanceServiceClient
 	return &instanceServiceClient{cc}
 }
 
-func (c *instanceServiceClient) CreateImage(ctx context.Context, in *CreateImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error) {
+func (c *instanceServiceClient) CreateTrainingImage(ctx context.Context, in *CreateTrainingImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error) {
 	out := new(CreateImageResponse)
-	err := c.cc.Invoke(ctx, InstanceService_CreateImage_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, InstanceService_CreateTrainingImage_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *instanceServiceClient) CreateDeploymentImage(ctx context.Context, in *CreateDeploymentImageRequest, opts ...grpc.CallOption) (*CreateImageResponse, error) {
+	out := new(CreateImageResponse)
+	err := c.cc.Invoke(ctx, InstanceService_CreateDeploymentImage_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -94,7 +105,8 @@ func (c *instanceServiceClient) OperateInstance(ctx context.Context, in *Operate
 // All implementations must embed UnimplementedInstanceServiceServer
 // for forward compatibility
 type InstanceServiceServer interface {
-	CreateImage(context.Context, *CreateImageRequest) (*CreateImageResponse, error)
+	CreateTrainingImage(context.Context, *CreateTrainingImageRequest) (*CreateImageResponse, error)
+	CreateDeploymentImage(context.Context, *CreateDeploymentImageRequest) (*CreateImageResponse, error)
 	DeleteImage(context.Context, *DeleteImageRequest) (*DeleteImageResponse, error)
 	CreateInstance(context.Context, *CreateInstanceRequest) (*CreateInstanceResponse, error)
 	GetInstanceInfo(context.Context, *InstanceInfoRequest) (*InstanceInfoResponse, error)
@@ -106,8 +118,11 @@ type InstanceServiceServer interface {
 type UnimplementedInstanceServiceServer struct {
 }
 
-func (UnimplementedInstanceServiceServer) CreateImage(context.Context, *CreateImageRequest) (*CreateImageResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateImage not implemented")
+func (UnimplementedInstanceServiceServer) CreateTrainingImage(context.Context, *CreateTrainingImageRequest) (*CreateImageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateTrainingImage not implemented")
+}
+func (UnimplementedInstanceServiceServer) CreateDeploymentImage(context.Context, *CreateDeploymentImageRequest) (*CreateImageResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDeploymentImage not implemented")
 }
 func (UnimplementedInstanceServiceServer) DeleteImage(context.Context, *DeleteImageRequest) (*DeleteImageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteImage not implemented")
@@ -134,20 +149,38 @@ func RegisterInstanceServiceServer(s grpc.ServiceRegistrar, srv InstanceServiceS
 	s.RegisterService(&InstanceService_ServiceDesc, srv)
 }
 
-func _InstanceService_CreateImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateImageRequest)
+func _InstanceService_CreateTrainingImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateTrainingImageRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(InstanceServiceServer).CreateImage(ctx, in)
+		return srv.(InstanceServiceServer).CreateTrainingImage(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: InstanceService_CreateImage_FullMethodName,
+		FullMethod: InstanceService_CreateTrainingImage_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(InstanceServiceServer).CreateImage(ctx, req.(*CreateImageRequest))
+		return srv.(InstanceServiceServer).CreateTrainingImage(ctx, req.(*CreateTrainingImageRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _InstanceService_CreateDeploymentImage_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDeploymentImageRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(InstanceServiceServer).CreateDeploymentImage(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: InstanceService_CreateDeploymentImage_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(InstanceServiceServer).CreateDeploymentImage(ctx, req.(*CreateDeploymentImageRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -232,8 +265,12 @@ var InstanceService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*InstanceServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateImage",
-			Handler:    _InstanceService_CreateImage_Handler,
+			MethodName: "CreateTrainingImage",
+			Handler:    _InstanceService_CreateTrainingImage_Handler,
+		},
+		{
+			MethodName: "CreateDeploymentImage",
+			Handler:    _InstanceService_CreateDeploymentImage_Handler,
 		},
 		{
 			MethodName: "DeleteImage",

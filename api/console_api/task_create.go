@@ -14,6 +14,7 @@ type TaskCreateRequest struct {
 	Name                 string   `json:"name" binding:"required" msg:"Please enter task name"`
 	Type                 string   `json:"type" binding:"required" msg:"Please enter task type"`
 	Model                string   `json:"model"`
+	Template             string   `json:"template"`
 	DataFileNames        []string `json:"data_file_names"`
 	DataFilePaths        []string `json:"data_file_paths"`
 	TrainedModelFileName string   `json:"trained_model_file_name"`
@@ -63,6 +64,7 @@ func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
 	}
 
 	if ctype.TaskType(cr.Type) == ctype.DeploymentTask {
+		taskModel.Template = cr.Template
 		taskModel.TrainedModelFileName = cr.TrainedModelFileName
 		taskModel.TrainedModelFilePath = cr.TrainedModelFilePath
 	}

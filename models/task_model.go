@@ -8,6 +8,7 @@ type TaskModel struct {
 	Type                 ctype.TaskType   `gorm:"size:36" json:"type"`
 	Status               ctype.TaskStatus `gorm:"size:36" json:"status"`
 	Model                string           `gorm:"size:36" json:"model"`
+	Template             string           `gorm:"size:36" json:"template"`
 	DataFileName         string           `gorm:"size:128" json:"data_file_name"`
 	DataFilePath         string           `gorm:"size:128" json:"data_file_path"`
 	TrainingLabel        string           `gorm:"size:36" json:"training_label"`
