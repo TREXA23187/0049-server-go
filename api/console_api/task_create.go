@@ -11,16 +11,18 @@ import (
 )
 
 type TaskCreateRequest struct {
-	Name                 string   `json:"name" binding:"required" msg:"Please enter task name"`
-	Type                 string   `json:"type" binding:"required" msg:"Please enter task type"`
-	Model                string   `json:"model"`
-	Template             string   `json:"template"`
-	DataFileNames        []string `json:"data_file_names"`
-	DataFilePaths        []string `json:"data_file_paths"`
-	TrainedModelFileName string   `json:"trained_model_file_name"`
-	TrainedModelFilePath string   `json:"trained_model_file_path"`
-	TrainingLabel        string   `json:"training_label"`
-	TrainingDataLabel    []string `json:"training_data_label"`
+	Name                 string         `json:"name" binding:"required" msg:"Please enter task name"`
+	Type                 string         `json:"type" binding:"required" msg:"Please enter task type"`
+	Model                string         `json:"model"`
+	Template             string         `json:"template"`
+	DataFileNames        []string       `json:"data_file_names"`
+	DataFilePaths        []string       `json:"data_file_paths"`
+	TrainedModelFileName string         `json:"trained_model_file_name"`
+	TrainedModelFilePath string         `json:"trained_model_file_path"`
+	TrainingLabel        string         `json:"training_label"`
+	TrainingDataLabel    []string       `json:"training_data_label"`
+	EnableAdvance        bool           `json:"enable_advance"`
+	HyperParameters      map[string]any `json:"hyper_parameters"`
 }
 
 func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
@@ -61,6 +63,17 @@ func (ConsoleApi) TaskCreateView(ctx *gin.Context) {
 		taskModel.DataFileName = cr.DataFileNames[0]
 		taskModel.DataFilePath = cr.DataFilePaths[0]
 
+		taskModel.EnableAdvance = cr.EnableAdvance
+		if cr.EnableAdvance {
+			hyperParamBytes, err := json.Marshal(cr.HyperParameters)
+			if err != nil {
+				global.Log.Error(err)
+				res.FailWithMessage(err.Error(), ctx)
+				return
+			}
+
+			taskModel.HyperParameters = string(hyperParamBytes)
+		}
 	}
 
 	if ctype.TaskType(cr.Type) == ctype.DeploymentTask {

@@ -16,4 +16,6 @@ type TaskModel struct {
 	TrainedModelFileName string           `gorm:"size:128" json:"trained_model_file_name"`
 	TrainedModelFilePath string           `gorm:"size:128" json:"trained_model_file_path"`
 	CreateUser           uint             `json:"create_user"`
+	EnableAdvance        bool             `json:"enable_advance"`
+	HyperParameters      string           `json:"hyper_parameters"`
 }
