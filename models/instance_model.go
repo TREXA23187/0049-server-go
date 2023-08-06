@@ -15,4 +15,5 @@ type InstanceModel struct {
 	InstanceName string       `gorm:"size:128" json:"instance_name"`
 	CreateUser   uint         `json:"create_user"`
 	IsPublic     bool         `gorm:"size:16;default:false" json:"is_public"`
+	Link         string       `gorm:"size:512" json:"link"`
 }

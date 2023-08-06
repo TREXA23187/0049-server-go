@@ -46,15 +46,17 @@ func (ConsoleApi) TaskOperateView(ctx *gin.Context) {
 			res.FailWithMessage(err.Error(), ctx)
 		}
 
-		trainedModelFileName := fmt.Sprintf("task(%s).pickle", task.Name)
-		trainedModelFilePath, err := qiniu.UploadFile(trainedModelFile, trainedModelFileName, "trained_model_file")
-		if err != nil {
-			global.Log.Error(err)
-			res.FailWithMessage(err.Error(), ctx)
-		}
+		if task.TrainedModelFilePath == "" {
+			trainedModelFileName := fmt.Sprintf("task(%s).pickle", task.Name)
+			trainedModelFilePath, err := qiniu.UploadFile(trainedModelFile, trainedModelFileName, "trained_model_file")
+			if err != nil {
+				global.Log.Error(err)
+				res.FailWithMessage(err.Error(), ctx)
+			}
 
-		task.TrainedModelFileName = trainedModelFileName
-		task.TrainedModelFilePath = trainedModelFilePath
+			task.TrainedModelFileName = trainedModelFileName
+			task.TrainedModelFilePath = trainedModelFilePath
+		}
 	}
 
 	global.DB.Save(&task)

@@ -31,4 +31,6 @@ func (router RouterGroup) ConsoleRouter() {
 	router.GET("/console/image/list", consoleApi.ImageListView)
 	router.GET("/console/image/info", consoleApi.ImageInfoView)
 	router.DELETE("/console/image", consoleApi.ImageRemoveView)
+
+	router.POST("/console/interface", consoleApi.InterfaceDataRedirectView)
 }

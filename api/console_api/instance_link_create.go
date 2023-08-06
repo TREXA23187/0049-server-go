@@ -11,10 +11,18 @@ import (
 )
 
 type InstanceLinkCreateRequest struct {
-	Instance string `json:"instance"`
-	Template string `json:"template"`
-	LinkType string `json:"link_type"`
-	Autofill bool   `json:"autofill"`
+	Instance   string `json:"instance"`
+	Template   string `json:"template"`
+	LinkType   string `json:"link_type"`
+	Expiration int    `json:"expiration"`
+	Autofill   bool   `json:"autofill"`
+}
+
+type InstanceLinkCreateResponse struct {
+	Link        string `json:"link"`
+	Autofill    bool   `json:"autofill"`
+	TemplateId  uint   `json:"template_id"`
+	Redirection string `json:"redirection"`
 }
 
 func (ConsoleApi) InstanceLinkCreateView(ctx *gin.Context) {
@@ -40,12 +48,48 @@ func (ConsoleApi) InstanceLinkCreateView(ctx *gin.Context) {
 		return
 	}
 
-	token, err := jwts.GenerateLinkToken(jwts.LinkJwtPayLoad{
-		InstanceId: instanceModel.ID,
-		TemplateId: templateModel.ID,
-		LinkType:   cr.LinkType,
-		Autofill:   cr.Autofill,
-	}, time.Hour*time.Duration(global.Config.Jwt.Expires))
+	var link string
+	if cr.LinkType == "private" {
+		token, err := jwts.GenerateLinkToken(jwts.LinkJwtPayLoad{
+			InstanceId: instanceModel.ID,
+			TemplateId: templateModel.ID,
+			LinkType:   cr.LinkType,
+			Autofill:   cr.Autofill,
+		}, time.Hour*24*time.Duration(cr.Expiration))
+		if err != nil {
+			global.Log.Error(err)
+			res.FailWithMessage(err.Error(), ctx)
+			return
+		}
 
-	res.Ok(gin.H{"link": fmt.Sprintf("%s:3000/interface/%s?token=%s", global.Config.System.Host, templateModel.Name, token)}, "create link successfully", ctx)
+		link = fmt.Sprintf("%s:3000/interface/%s?token=%s", global.Config.System.Host, instanceModel.Name, token)
+		instanceModel.Link = link
+		instanceModel.IsPublic = false
+		global.DB.Save(&instanceModel)
+
+		var instanceLinkCreateResponse InstanceLinkCreateResponse
+		instanceLinkCreateResponse.Link = link
+		instanceLinkCreateResponse.Autofill = cr.Autofill
+		if cr.Autofill {
+			instanceLinkCreateResponse.TemplateId = templateModel.ID
+			instanceLinkCreateResponse.Redirection = instanceModel.URL + "/predict"
+		}
+
+		res.Ok(instanceLinkCreateResponse, "create link successfully", ctx)
+	} else {
+		link = fmt.Sprintf("%s:3000/interface/%s", global.Config.System.Host, instanceModel.Name)
+		instanceModel.Link = link
+		instanceModel.IsPublic = true
+		global.DB.Save(&instanceModel)
+
+		var instanceLinkCreateResponse InstanceLinkCreateResponse
+		instanceLinkCreateResponse.Link = link
+		instanceLinkCreateResponse.Autofill = cr.Autofill
+		if cr.Autofill {
+			instanceLinkCreateResponse.TemplateId = templateModel.ID
+			instanceLinkCreateResponse.Redirection = instanceModel.URL + "/predict"
+		}
+
+		res.Ok(instanceLinkCreateResponse, "create link successfully", ctx)
+	}
 }
