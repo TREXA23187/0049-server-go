@@ -15,6 +15,12 @@ type InterfaceDataRedirectRequest struct {
 	URL  string                 `json:"url" `
 }
 
+type InterfaceDataRedirectResponse struct {
+	Code int    `json:"code"`
+	Data any    `json:"data" `
+	Msg  string `json:"msg"`
+}
+
 func (ConsoleApi) InterfaceDataRedirectView(ctx *gin.Context) {
 	var cr InterfaceDataRedirectRequest
 	if err := ctx.ShouldBindJSON(&cr); err != nil {
@@ -38,5 +44,18 @@ func (ConsoleApi) InterfaceDataRedirectView(ctx *gin.Context) {
 	defer resp.Body.Close()
 	body, _ := io.ReadAll(resp.Body)
 
-	res.OkWithData(string(body), ctx)
+	var interfaceDataRedirectResponse InterfaceDataRedirectResponse
+	err = json.Unmarshal(body, &interfaceDataRedirectResponse)
+	if err != nil {
+		global.Log.Error(err)
+		res.FailWithMessage(err.Error(), ctx)
+		return
+	}
+
+	if interfaceDataRedirectResponse.Code == 0 {
+		res.OkWithData(interfaceDataRedirectResponse.Data, ctx)
+	} else {
+		res.FailWithMessage(interfaceDataRedirectResponse.Msg, ctx)
+	}
+
 }

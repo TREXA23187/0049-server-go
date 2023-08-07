@@ -134,8 +134,7 @@ func (ConsoleApi) ImageCreateView(ctx *gin.Context) {
 
 			conn := pb.NewInstanceServiceClient(global.GRPC)
 
-			//imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type), Model: "", DataLabel: "", TargetLabel: "", Template: "", Title: "", HyperParameters: ""}
-			imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type)}
+			imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type), Model: "", DataLabel: "", TargetLabel: "", Template: "", Title: "", HyperParameters: ""}
 			r, err := conn.CreateDeploymentImage(context.Background(), &pb.CreateDeploymentImageRequest{Repository: cr.Repository, Tag: cr.Tag, Template: "", TrainedModelFile: trainedModelFileBytes, LabelIntTag: trainingTask.LabelIntTag, ImageConfig: imageConfig})
 			if err != nil {
 				global.Log.Error("could not greet: %v", err)
