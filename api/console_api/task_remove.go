@@ -12,5 +12,5 @@ func (ConsoleApi) TaskRemoveView(ctx *gin.Context) {
 
 	global.DB.Delete(&models.TaskModel{}, "id = ?", id)
 
-	res.OkWithMessage("taska deleted", ctx)
+	res.OkWithMessage("task removed", ctx)
 }

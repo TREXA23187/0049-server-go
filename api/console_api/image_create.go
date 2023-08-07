@@ -88,7 +88,15 @@ func (ConsoleApi) ImageCreateView(ctx *gin.Context) {
 
 			conn := pb.NewInstanceServiceClient(global.GRPC)
 
-			imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type), Model: modelModel.Name, DataLabel: taskModel.TrainingDataLabel, TargetLabel: taskModel.TrainingLabel, Template: "", Title: fmt.Sprintf("%s: %s", string(taskModel.Type), modelModel.Name)}
+			var hyperParameters string
+			if taskModel.HyperParameters != "" {
+				hyperParameters = taskModel.HyperParameters
+			} else {
+				hyperParameters = "{}"
+			}
+
+			imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type), Model: modelModel.Name, DataLabel: taskModel.TrainingDataLabel, TargetLabel: taskModel.TrainingLabel, Template: "", Title: fmt.Sprintf("%s: %s", string(taskModel.Type), modelModel.Name), HyperParameters: hyperParameters}
+
 			r, err := conn.CreateTrainingImage(context.Background(), &pb.CreateTrainingImageRequest{Repository: cr.Repository, Tag: cr.Tag, DataFile: dataFileBytes, ModelFile: modelFileBytes, ImageConfig: imageConfig})
 			if err != nil {
 				global.Log.Error("could not greet: %v", err)
@@ -116,10 +124,19 @@ func (ConsoleApi) ImageCreateView(ctx *gin.Context) {
 		if taskModel.Type == ctype.DeploymentTask {
 			trainedModelFileBytes, err := file_service.GetQiNiuFileBytes(taskModel.TrainedModelFilePath)
 
+			var trainingTask models.TaskModel
+			err = global.DB.Take(&trainingTask, "type = ? and trained_model_file_path = ?", ctype.TrainingTask, taskModel.TrainedModelFilePath).Error
+			if err != nil {
+				global.Log.Error(err)
+				res.FailWithMessage("task does not exist", ctx)
+				return
+			}
+
 			conn := pb.NewInstanceServiceClient(global.GRPC)
 
-			imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type), Model: "", DataLabel: "", TargetLabel: "", Template: "", Title: ""}
-			r, err := conn.CreateDeploymentImage(context.Background(), &pb.CreateDeploymentImageRequest{Repository: cr.Repository, Tag: cr.Tag, Template: "", TrainedModelFile: trainedModelFileBytes, ImageConfig: imageConfig})
+			//imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type), Model: "", DataLabel: "", TargetLabel: "", Template: "", Title: "", HyperParameters: ""}
+			imageConfig := &pb.ImageConfig{TaskId: strconv.Itoa(int(taskModel.ID)), Type: string(taskModel.Type)}
+			r, err := conn.CreateDeploymentImage(context.Background(), &pb.CreateDeploymentImageRequest{Repository: cr.Repository, Tag: cr.Tag, Template: "", TrainedModelFile: trainedModelFileBytes, LabelIntTag: trainingTask.LabelIntTag, ImageConfig: imageConfig})
 			if err != nil {
 				global.Log.Error("could not greet: %v", err)
 				res.FailWithMessage("could not greet: %v", ctx)

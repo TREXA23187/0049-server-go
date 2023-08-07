@@ -12,9 +12,10 @@ import (
 )
 
 type TaskOperateRequest struct {
-	TaskId    string `json:"task_id" binding:"required" msg:"Please enter task id"`
-	Operation string `json:"operation" binding:"required" msg:"Please enter operation"`
-	ModelFile string `json:"model_file"`
+	TaskId      string `json:"task_id" binding:"required" msg:"Please enter task id"`
+	Operation   string `json:"operation" binding:"required" msg:"Please enter operation"`
+	ModelFile   string `json:"model_file"`
+	LabelIntTag string `json:"label_int_tag"`
 }
 
 func (ConsoleApi) TaskOperateView(ctx *gin.Context) {
@@ -23,6 +24,8 @@ func (ConsoleApi) TaskOperateView(ctx *gin.Context) {
 		res.FailWithValidMsg(err, &cr, ctx)
 		return
 	}
+
+	fmt.Println(33, cr.LabelIntTag)
 
 	var task models.TaskModel
 	err := global.DB.Take(&task, "id=?", cr.TaskId).Error
@@ -57,6 +60,8 @@ func (ConsoleApi) TaskOperateView(ctx *gin.Context) {
 			task.TrainedModelFileName = trainedModelFileName
 			task.TrainedModelFilePath = trainedModelFilePath
 		}
+
+		task.LabelIntTag = cr.LabelIntTag
 	}
 
 	global.DB.Save(&task)

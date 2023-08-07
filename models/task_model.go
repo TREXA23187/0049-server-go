@@ -18,4 +18,5 @@ type TaskModel struct {
 	CreateUser           uint             `json:"create_user"`
 	EnableAdvance        bool             `json:"enable_advance"`
 	HyperParameters      string           `json:"hyper_parameters"`
+	LabelIntTag          string           `json:"label_int_tag"`
 }
