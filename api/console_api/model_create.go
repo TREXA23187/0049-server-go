@@ -5,17 +5,19 @@ import (
 	"0049-server-go/models"
 	"0049-server-go/models/res"
 	"0049-server-go/utils/jwts"
+	"fmt"
 	"github.com/gin-gonic/gin"
 )
 
 type ModelCreateRequest struct {
-	Name           string   `json:"name" binding:"required" msg:"Please enter name"`
-	Type           string   `json:"type" binding:"required" msg:"Please enter type"`
-	CodeFile       string   `json:"code_file"`
-	ModelFileNames []string `json:"model_file_names"`
-	ModelFilePaths []string `json:"model_file_paths"`
-	IsGithub       bool     `json:"is_github"`
-	GithubLink     string   `json:"github_link"`
+	Name            string   `json:"name" binding:"required" msg:"Please enter name"`
+	Type            string   `json:"type" binding:"required" msg:"Please enter type"`
+	CodeFile        string   `json:"code_file"`
+	ModelFileNames  []string `json:"model_file_names"`
+	ModelFilePaths  []string `json:"model_file_paths"`
+	IsGithub        bool     `json:"is_github"`
+	GithubLink      string   `json:"github_link"`
+	HyperParameters string   `json:"hyper_parameters"`
 }
 
 func (ConsoleApi) ModelCreateView(ctx *gin.Context) {
@@ -41,10 +43,15 @@ func (ConsoleApi) ModelCreateView(ctx *gin.Context) {
 	modelModel.CreateUser = claims.UserID
 	modelModel.ModelFileName = cr.ModelFileNames[0]
 	modelModel.ModelFilePath = cr.ModelFilePaths[0]
+	modelModel.HyperParameters = cr.HyperParameters
 
 	if cr.IsGithub {
 		modelModel.IsGithub = cr.IsGithub
 		modelModel.GithubLink = cr.GithubLink
+	}
+
+	for _, v := range cr.HyperParameters {
+		fmt.Println(v)
 	}
 
 	err = global.DB.Create(&modelModel).Error
