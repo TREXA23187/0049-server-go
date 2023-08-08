@@ -6,18 +6,19 @@ import (
 	pb "0049-server-go/proto"
 	"context"
 	"github.com/gin-gonic/gin"
+	"net/http"
 )
 
-func (ConsoleApi) InstanceInfoView(ctx *gin.Context) {
+func (ConsoleApi) InstanceLogsView(ctx *gin.Context) {
 	instanceId := ctx.Query("instance_id")
 
 	c := pb.NewInstanceServiceClient(global.GRPC)
 
-	r, err := c.GetInstanceInfo(context.Background(), &pb.InstanceInfoRequest{InstanceId: instanceId, NeedLogs: false})
+	r, err := c.GetInstanceInfo(context.Background(), &pb.InstanceInfoRequest{InstanceId: instanceId, NeedLogs: true})
 	if err != nil {
 		global.Log.Error("could not greet: %v", err)
 		res.FailWithMessage("could not greet: %v", ctx)
 	}
 
-	res.OkWithData(r, ctx)
+	ctx.Data(http.StatusOK, "application/octet-stream", r.Logs)
 }

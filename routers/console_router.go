@@ -7,6 +7,7 @@ func (router RouterGroup) ConsoleRouter() {
 	router.POST("/console/instance", consoleApi.InstanceCreateView)
 	router.GET("/console/instance/list", consoleApi.InstanceListView)
 	router.GET("/console/instance/info", consoleApi.InstanceInfoView)
+	router.GET("/console/instance/logs", consoleApi.InstanceLogsView)
 	router.POST("/console/instance/operate", consoleApi.InstanceOperateView)
 	router.DELETE("/console/instance", consoleApi.InstanceRemoveView)
 	router.POST("/console/instance/link", consoleApi.InstanceLinkCreateView)
