@@ -18,6 +18,8 @@ var authWhiteList = []string{
 	"/api/v1/users/login-POST",
 	"/api/v1/users/user-POST",
 	"/api/v1/file/upload-POST",
+	"/api/v1/file/upload/data-POST",
+	"/api/v1/file/upload/model-POST",
 	"/api/v1/file/upload-GET",
 	"/api/v1/users/mock-POST",
 	"/api/v1/console/task/operate-POST",
@@ -28,6 +30,7 @@ func JwtAuth() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		//whether this request is on the whitelist
 		url := strings.Split(fmt.Sprintf("%s", ctx.Request.URL), "?")
+
 		inWhiteList := utils.InList(fmt.Sprintf("%s-%s", url[0], ctx.Request.Method), authWhiteList)
 
 		if inWhiteList {
@@ -60,7 +63,7 @@ func JwtAuth() gin.HandlerFunc {
 		}
 
 		// super admin
-		if ctype.Role(claims.Role) == ctype.RoleSuperAdmin {
+		if ctype.Role(claims.Role) == ctype.RoleSuperAdmin || ctype.Role(claims.Role) == ctype.RoleUser {
 			ctx.Set("claims", claims)
 			ctx.Next()
 			return

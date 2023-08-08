@@ -13,8 +13,7 @@ import (
 )
 
 func (ConsoleApi) ImageRemoveView(ctx *gin.Context) {
-	repository := ctx.Query("repository")
-	tag := ctx.Query("tag")
+	imageId := ctx.Query("image_id")
 
 	conn, err := grpc.Dial(ctype.GRPC_ADDRESS, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
@@ -24,15 +23,16 @@ func (ConsoleApi) ImageRemoveView(ctx *gin.Context) {
 	defer conn.Close()
 	c := pb.NewInstanceServiceClient(conn)
 
-	r, err := c.DeleteImage(context.Background(), &pb.DeleteImageRequest{Repository: repository, Tag: tag})
+	r, err := c.DeleteImage(context.Background(), &pb.DeleteImageRequest{ImageId: imageId})
 	if err != nil {
 		global.Log.Error("could not greet: %v", err)
 		res.FailWithMessage("could not greet: %v", ctx)
 	}
 
 	if r.Success {
-		global.DB.Delete(&models.ImageModel{}, "repository = ?", repository)
+		global.DB.Delete(&models.ImageModel{}, "image_id = ?", imageId)
+		res.OkWithMessage("image deleted", ctx)
+	} else {
+		res.FailWithMessage(r.Msg, ctx)
 	}
-
-	res.OkWithMessage("image deleted", ctx)
 }

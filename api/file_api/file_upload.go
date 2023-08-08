@@ -13,7 +13,7 @@ import (
 func (FileApi) FileUploadView(ctx *gin.Context) {
 
 	var filePrefix string
-	fileType := ctx.Query("type")
+	fileType := ctx.Param("type")
 
 	if ctype.FileType(fileType) == ctype.DataFileType {
 		filePrefix = "data_file"
