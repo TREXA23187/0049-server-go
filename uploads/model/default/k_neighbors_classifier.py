@@ -5,6 +5,7 @@ import warnings
 
 import pandas as pd
 import sklearn
+from sklearn.metrics import classification_report
 from sklearn.model_selection import GridSearchCV
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
@@ -49,18 +50,11 @@ def train_dataset(x_train, y_train):
 
 def evaluate_classifier_model(classifier, x_test, y_test):
     y_pred = classifier.predict(x_test)
-    y_score = classifier.predict_proba(x_test)
 
-    # ------------ 1. Accuracy ------------ #
-    accuracy = sklearn.metrics.accuracy_score(y_test, y_pred)
-    recall = sklearn.metrics.recall_score(y_test, y_pred, average="micro")
-    f1_score = sklearn.metrics.f1_score(y_test, y_pred, average="micro")
     confusion_matrix = sklearn.metrics.confusion_matrix(y_test, y_pred)
 
     return {
-        "accuracy": accuracy,
-        "recall": recall,
-        "f1_score": f1_score,
+        "classification_report": classification_report(y_test, y_pred, output_dict=True),
         "confusion_matrix": confusion_matrix.tolist()
     }
 
